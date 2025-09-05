@@ -282,6 +282,290 @@
       font-size: 16px; 
       color: var(--text);
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planilha de Campo</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --muted: #64748b;
+      --text: #1e293b;
+      --accent: #10b981;
+      --accent-2: #3b82f6;
+      --danger: #ef4444;
+      --border: #e2e8f0;
+      --success-light: #dcfce7;
+      --primary-light: #dbeafe;
+      --danger-light: #fee2e2;
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    
+    header {
+      padding: 20px 24px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      background-color: var(--card);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+    }
+    
+    h1 { 
+      margin: 0; 
+      font-size: clamp(18px, 2.6vw, 24px); 
+      font-weight: 700; 
+      color: #1e293b;
+    }
+    
+    .wrap { 
+      max-width: 1200px; 
+      margin: 24px auto; 
+      padding: 0 16px; 
+    }
+    
+    .toolbar { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+      margin-bottom: 14px; 
+    }
+    
+    button, label.button {
+      appearance: none; 
+      border: 1px solid var(--border); 
+      background: white; 
+      color: var(--text);
+      padding: 10px 16px; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 150ms ease;
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      user-select: none;
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    button:hover, label.button:hover { 
+      transform: translateY(-1px); 
+      border-color: #cbd5e1; 
+      background: #f8fafc; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    button.primary { 
+      background: var(--accent-2); 
+      border-color: var(--accent-2); 
+      color: white; 
+    }
+    
+    button.primary:hover { 
+      background: #2563eb; 
+      border-color: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    button.success { 
+      background: var(--accent); 
+      border-color: var(--accent); 
+      color: white; 
+    }
+    
+    button.success:hover { 
+      background: #059669; 
+      border-color: #059669;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    
+    button.danger { 
+      background: var(--danger); 
+      border-color: var(--danger); 
+      color: white; 
+    }
+    
+    button.danger:hover { 
+      background: #dc2626; 
+      border-color: #dc2626;
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    }
+    
+    input[type="file"] { 
+      display: none; 
+    }
+    
+    .card {
+      background: white;
+      border: 1px solid var(--border); 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 32px;
+    }
+    
+    .table-wrap { 
+      overflow: auto; 
+      max-height: 600px;
+    }
+    
+    table { 
+      width: 100%; 
+      border-collapse: separate; 
+      border-spacing: 0; 
+      min-width: 900px; 
+    }
+    
+    thead th {
+      position: sticky; 
+      top: 0; 
+      z-index: 2; 
+      background: #f1f5f9; 
+      border-bottom: 1px solid var(--border);
+      font-size: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: .06em; 
+      color: var(--muted);
+      padding: 14px 12px; 
+      text-align: left; 
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    
+    tbody td { 
+      border-bottom: 1px solid var(--border); 
+      padding: 12px; 
+      background: white;
+    }
+    
+    tbody tr:hover { 
+      background: #f8fafc; 
+    }
+    
+    .input {
+      width: 100%; 
+      padding: 10px 12px; 
+      border: 1px solid var(--border); 
+      background: white; 
+      color: var(--text);
+      border-radius: 6px; 
+      outline: none; 
+      transition: 150ms ease; 
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .input:focus { 
+      border-color: var(--accent-2); 
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
+    }
+    
+    .cell-actions { 
+      display: flex; 
+      gap: 6px; 
+    }
+    
+    .cell-actions button {
+      padding: 8px;
+      font-size: 12px;
+      min-width: auto;
+    }
+    
+    .badge {
+      background: rgba(96,165,250,0.15); 
+      border: 1px solid rgba(96,165,250,0.35);
+      color: #3b82f6; 
+      padding: 4px 10px; 
+      border-radius: 99px; 
+      font-size: 12px; 
+      font-weight: 500;
+    }
+    
+    /* Ajustes específicos para os campos - NOVOS TAMANHOS */
+    td:nth-child(1) { /* Coluna Data */
+      width: 120px;
+    }
+    
+    td:nth-child(2) { /* Coluna Operação */
+      width: 120px;
+    }
+    
+    td:nth-child(3) { /* Coluna C. Tratamento */
+      width: 120px;
+    }
+    
+    td:nth-child(4) { /* Coluna C. Custo */
+      width: 100px;
+    }
+    
+    td:nth-child(5) { /* Coluna Fazenda */
+      width: 150px;
+    }
+    
+    td:nth-child(6) { /* Coluna Talhão */
+      width: 100px;
+    }
+    
+    td:nth-child(7) { /* Coluna O.S - AUMENTADO */
+      width: 150px;
+    }
+    
+    td:nth-child(8) { /* Coluna Área (ha) */
+      width: 100px;
+    }
+    
+    td:nth-child(9) { /* Coluna Lâmina (mm) */
+      width: 120px;
+    }
+    
+    td:nth-child(10) { /* Coluna Experimento */
+      width: 200px;
+    }
+    
+    td:nth-child(11) { /* Coluna Ações */
+      width: 100px;
+    }
+    
+    /* Ajustando os inputs dentro dessas colunas */
+    td .input {
+      width: 100%;
+    }
+    
+    #totals-container {
+      max-width: 1200px; 
+      margin: 0 auto 32px; 
+      padding: 20px 24px;
+      background: white; 
+      border-radius: 12px; 
+      border: 1px solid var(--border);
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      font-size: 16px; 
+      color: var(--text);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     [data-key="os"] {
@@ -725,6 +1009,11 @@
       font-size: 14px;
       border-top: 1px solid var(--border);
     }
+
+    /* Classe para ocultar elementos visualmente */
+    .hidden {
+      display: none !important;
+    }
 </style>
 <body>
   <header class="wrap">
@@ -797,7 +1086,7 @@
         <div>Área Total</div>
         <span id="sumArea">0.00</span> ha
       </div>
-      <div>
+      <div class="hidden"> <!-- Adicionada a classe hidden aqui -->
         <div>Lâmina Total</div>
         <span id="sumLamina">0.00</span> mm
       </div>
