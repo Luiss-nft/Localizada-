@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Gerenciamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;       /* fundo */
+      --card:#121832;     /* cartões */
+      --muted:#8a93b2;    /* textos secundários */
+      --primary:#6c8cff;  /* destaque */
+      --primary-2:#8a5bff;
+      --ring: rgba(108,140,255,.4);
+      --ok:#10b981;
+      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(108,140,255,.15), transparent 40%),
+                  radial-gradient(1000px 700px at 110% 10%, rgba(138,91,255,.12), transparent 45%),
+                  var(--bg);
+      color:#e8ecff;
+    }
+    a{color:inherit;text-decoration:none}
+
+    .container{
+      min-height:100%;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+    }
+
+    header{
+      padding:28px clamp(16px, 6vw, 48px);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
+    .logo{
+      width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2));
+      display:grid; place-items:center; box-shadow:var(--shadow);
+    }
+    .logo svg{opacity:.9}
+
+    main{padding: clamp(24px, 6vw, 56px);}
+    .hero{
+      max-width:1000px; margin:0 auto 28px; text-align:center;
+    }
+    .hero h1{font-size: clamp(28px, 4vw, 42px); margin:0 0 10px; line-height:1.1}
+    .hero p{margin:0; color:var(--muted)}
+
+    .grid{
+      max-width:1100px; margin:36px auto 0; display:grid; gap:24px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .card{
+      position:relative; overflow:hidden; border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+      border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow);
+      padding:22px; transition:.25s ease transform, .25s ease box-shadow, .25s ease border-color;
+      backdrop-filter: blur(6px);
+      cursor:pointer;
+    }
+    .card:hover{ transform: translateY(-3px); box-shadow: 0 15px 45px rgba(0,0,0,.45); border-color: rgba(108,140,255,.35);}
+    .card:focus-visible{ outline:3px solid var(--ring)}
+
+    .card-top{ display:flex; align-items:center; gap:14px; margin-bottom:10px}
+    .card .icon{width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(108,140,255,.12);}
+    .card .icon svg{ width:24px; height:24px }
+    .card h2{font-size: clamp(18px, 2.5vw, 22px); margin:0}
+    .card p{margin:8px 0 0; color:var(--muted); font-size:14px}
+
+    .chip{
+      display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:8px 12px; border-radius:999px;
+      background:rgba(16,185,129,.12); color:#d2fff1; border:1px solid rgba(16,185,129,.35); font-weight:600; font-size:12px;
+    }
+
+    footer{ padding:26px clamp(16px, 6vw, 48px); color:var(--muted); text-align:center; font-size:13px }
+
+    /* pequenos toques de animação */
+    @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(108,140,255,.35)}70%{box-shadow:0 0 0 12px rgba(108,140,255,0)}100%{box-shadow:0 0 0 0 rgba(108,140,255,0)}}
+    .pulse{ animation: pulseGlow 2.2s ease-in-out infinite }
+
+    /* responsividade extra */
+    @media (max-width:420px){ .card{padding:18px} .card .icon{width:40px;height:40px} }
+  </style>
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo pulse" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span>Sistema de Gerenciamento</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="titulo">
+        <h1 id="titulo">Escolha um módulo</h1>
+        <p>Selecione abaixo para abrir a <strong>Planilha de Gerenciamento</strong> ou a <strong>Gestão de Veículos</strong>.</p>
+      </section>
+
+      <section class="grid" aria-label="Módulos">
+        <!-- Card: Planilha de Gerenciamento -->
+        <a class="card" id="card-planilha" href="/Planilha/index.html">
+          <div class="card-top">
+            <div class="icon" aria-hidden="true">
+              <i data-lucide="table"></i>
+            </div>
+            <div>
+              <h2>Planilha de Gerenciamento</h2>
+             
+            </div>
+          </div>
+          <span class="chip">Pronto para usar</span>
+        </a>
+
+        <!-- Card: Gestão de Veículos -->
+        <a class="card" id="card-veiculos" href="/Gestao_veiculos/index.html">
+          <div class="card-top">
+            <div class="icon" aria-hidden="true" style="background: rgba(138,91,255,.12)">
+              <i data-lucide="car"></i>
+            </div>
+            <div>
+              <h2>Gestão de Veículos</h2>
+            
+            </div>
+          </div>
+          <span class="chip" style="background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.35);">Beta</span>
+        </a>
+      </section>
+
+      <!-- Seções placeholder -->
+      <section id="planilha" style="max-width:1000px;margin:38px auto 0; display:none">
+        <h2 style="margin:0 0 10px">Planilha de Gerenciamento</h2>
+        <p style="color:var(--muted)">Este é um espaço reservado. Você pode integrar sua planilha ou criar uma tela com tabelas e gráficos aqui.</p>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+          <button id="abrirPlanilha" style="padding:10px 14px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:white; border:none; box-shadow:var(--shadow); cursor:pointer">Abrir Planilha</button>
+          <button id="exportarCSV" style="padding:10px 14px; border-radius:12px; background:#1f2a4f; color:#d9e2ff; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); cursor:pointer">Exportar CSV</button>
+        </div>
+      </section>
+
+      <section id="veiculos" style="max-width:1000px;margin:38px auto 0; display:none">
+        <h2 style="margin:0 0 10px">Gestão de Veículos</h2>
+        <p style="color:var(--muted)">Cadastre e acompanhe sua frota. Em breve: checklist, manutenção preventiva e relatórios.</p>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+          <button id="novoVeiculo" style="padding:10px 14px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:white; border:none; box-shadow:var(--shadow); cursor:pointer">Novo Veículo</button>
+          <button id="listarVeiculos" style="padding:10px 14px; border-radius:12px; background:#1f2a4f; color:#d9e2ff; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); cursor:pointer">Listar Veículos</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © <span id="year"></span> Sistema de Gerenciamento
+    </footer>
+  </div>
+
+  <script>
+    // Ativa ícones Lucide
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+
+    // Navegação simples por hash (#planilha | #veiculos)
+    const sections = {
+      planilha: document.getElementById('planilha'),
+      veiculos: document.getElementById('veiculos')
+    };
+
+    function showSection(id){
+      for (const key in sections){ sections[key].style.display = 'none'; }
+      if (sections[id]) sections[id].style.display = 'block';
+      // foco acessível
+      if (sections[id]) sections[id].setAttribute('tabindex','-1'), sections[id].focus({preventScroll:false});
+    }
+
+    function syncFromHash(){
+      const id = (location.hash || '').replace('#','');
+      if (id === 'planilha' || id === 'veiculos') {
+        showSection(id);
+      } else {
+        // nada selecionado: fecha seções
+        for (const key in sections){ sections[key].style.display = 'none'; }
+      }
+    }
+    window.addEventListener('hashchange', syncFromHash);
+    syncFromHash();
+
+    // Botões de Planilha (exemplos)
+    const abrirPlanilha = document.getElementById('abrirPlanilha');
+    const exportarCSV = document.getElementById('exportarCSV');
+    if (abrirPlanilha) abrirPlanilha.addEventListener('click', ()=>{
+      alert('Aqui você pode integrar sua planilha real (CSV/JSON/Backend).');
+    });
+    if (exportarCSV) exportarCSV.addEventListener('click', ()=>{
+      const rows = [
+        ['Tarefa','Horas','Custo'],
+        ['Exemplo A','5','R$ 250,00'],
+        ['Exemplo B','2','R$ 100,00']
+      ];
+      const csv = rows.map(r=>r.join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'planilha-exemplo.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Botões de Veículos (exemplos)
+    const novoVeiculo = document.getElementById('novoVeiculo');
+    const listarVeiculos = document.getElementById('listarVeiculos');
+    if (novoVeiculo) novoVeiculo.addEventListener('click', ()=>{
+      prompt('Cadastrar veículo:\nDigite placa/modelo (ex.: ABC1D23 - Strada)');
+    });
+    if (listarVeiculos) listarVeiculos.addEventListener('click', ()=>{
+      alert('Em breve: listagem de frota com filtros, manutenção e disponibilidade.');
+    });
+  </script>
+</body>
+</html>

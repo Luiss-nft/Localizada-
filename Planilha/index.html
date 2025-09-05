@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planilha de Campo</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --muted: #64748b;
+      --text: #1e293b;
+      --accent: #10b981;
+      --accent-2: #3b82f6;
+      --danger: #ef4444;
+      --border: #e2e8f0;
+      --success-light: #dcfce7;
+      --primary-light: #dbeafe;
+      --danger-light: #fee2e2;
+    }
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    
+    header {
+      padding: 20px 24px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      background-color: var(--card);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+    }
+    
+    h1 { 
+      margin: 0; 
+      font-size: clamp(18px, 2.6vw, 24px); 
+      font-weight: 700; 
+      color: #1e293b;
+    }
+    
+    .wrap { 
+      max-width: 1200px; 
+      margin: 24px auto; 
+      padding: 0 16px; 
+    }
+    
+    .toolbar { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+      margin-bottom: 14px; 
+    }
+    
+    button, label.button {
+      appearance: none; 
+      border: 1px solid var(--border); 
+      background: white; 
+      color: var(--text);
+      padding: 10px 16px; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 150ms ease;
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      user-select: none;
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    button:hover, label.button:hover { 
+      transform: translateY(-1px); 
+      border-color: #cbd5e1; 
+      background: #f8fafc; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    button.primary { 
+      background: var(--accent-2); 
+      border-color: var(--accent-2); 
+      color: white; 
+    }
+    
+    button.primary:hover { 
+      background: #2563eb; 
+      border-color: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    button.success { 
+      background: var(--accent); 
+      border-color: var(--accent); 
+      color: white; 
+    }
+    
+    button.success:hover { 
+      background: #059669; 
+      border-color: #059669;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    
+    button.danger { 
+      background: var(--danger); 
+      border-color: var(--danger); 
+      color: white; 
+    }
+    
+    button.danger:hover { 
+      background: #dc2626; 
+      border-color: #dc2626;
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    }
+    
+    input[type="file"] { 
+      display: none; 
+    }
+    
+    .card {
+      background: white;
+      border: 1px solid var(--border); 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 32px;
+    }
+    
+    .table-wrap { 
+      overflow: auto; 
+      max-height: 600px;
+    }
+    
+    table { 
+      width: 100%; 
+      border-collapse: separate; 
+      border-spacing: 0; 
+      min-width: 900px; 
+    }
+    
+    thead th {
+      position: sticky; 
+      top: 0; 
+      z-index: 2; 
+      background: #f1f5f9; 
+      border-bottom: 1px solid var(--border);
+      font-size: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: .06em; 
+      color: var(--muted);
+      padding: 14px 12px; 
+      text-align: left; 
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    
+    tbody td { 
+      border-bottom: 1px solid var(--border); 
+      padding: 12px; 
+      background: white;
+    }
+    
+    tbody tr:hover { 
+      background: #f8fafc; 
+    }
+    
+    .input {
+      width: 100%; 
+      padding: 10px 12px; 
+      border: 1px solid var(--border); 
+      background: white; 
+      color: var(--text);
+      border-radius: 6px; 
+      outline: none; 
+      transition: 150ms ease; 
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .input:focus { 
+      border-color: var(--accent-2); 
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
+    }
+    
+    .cell-actions { 
+      display: flex; 
+      gap: 6px; 
+    }
+    
+    .cell-actions button {
+      padding: 8px;
+      font-size: 12px;
+      min-width: auto;
+    }
+    
+    .badge {
+      background: rgba(96,165,250,0.15); 
+      border: 1px solid rgba(96,165,250,0.35);
+      color: #3b82f6; 
+      padding: 4px 10px; 
+      border-radius: 99px; 
+      font-size: 12px; 
+      font-weight: 500;
+    }
+    
+    /* Ajustes específicos para os campos - NOVOS TAMANHOS */
+    td:nth-child(1) { /* Coluna Data */
+      width: 120px;
+    }
+    
+    td:nth-child(2) { /* Coluna Operação */
+      width: 120px;
+    }
+    
+    td:nth-child(3) { /* Coluna C. Tratamento */
+      width: 120px;
+    }
+    
+    td:nth-child(4) { /* Coluna C. Custo */
+      width: 100px;
+    }
+    
+    td:nth-child(5) { /* Coluna Fazenda */
+      width: 150px;
+    }
+    
+    td:nth-child(6) { /* Coluna Talhão */
+      width: 100px;
+    }
+    
+    td:nth-child(7) { /* Coluna O.S - AUMENTADO */
+      width: 150px;
+    }
+    
+    td:nth-child(8) { /* Coluna Área (ha) */
+      width: 100px;
+    }
+    
+    td:nth-child(9) { /* Coluna Lâmina (mm) */
+      width: 120px;
+    }
+    
+    td:nth-child(10) { /* Coluna Experimento */
+      width: 200px;
+    }
+    
+    td:nth-child(11) { /* Coluna Ações */
+      width: 100px;
+    }
+    
+    /* Ajustando os inputs dentro dessas colunas */
+    td .input {
+      width: 100%;
+    }
+    
+    #totals-container {
+      max-width: 1200px; 
+      margin: 0 auto 32px; 
+      padding: 20px 24px;
+      background: white; 
+      border-radius: 12px; 
+      border: 1px solid var(--border);
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      font-size: 16px; 
+      color: var(--text);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    [data-key="os"] {
+  width: 200px;   /* aumenta a largura */
+  min-width: 120px;
+}
+
+    
+    #totals-container div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    #totals-container span {
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--accent-2);
+    }
+    
+    #chart-controls { 
+      margin: 0 auto 20px; 
+      max-width: 1200px; 
+      display: flex; 
+      justify-content: flex-end; 
+      gap: 10px; 
+      align-items: center;
+    }
+    
+    #chart-container { 
+      max-width: 1200px; 
+      margin: 0 auto 40px; 
+      padding: 24px; 
+      background: white; 
+      border-radius: 12px; 
+      border: 1px solid var(--border); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    /* Estilos para o seletor de período */
+    #periodSelect {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    /* Barra de pesquisa e filtros */
+    .search-container,
+    .advanced-filter {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .search-input,
+    .filter-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .search-input:focus,
+    .filter-input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      outline: none;
+    }
+    
+    .search-button,
+    .filter-button {
+      padding: 10px 18px;
+      background: var(--accent-2);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 150ms ease;
+    }
+    
+    .search-button:hover,
+    .filter-button:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    .clear-search,
+    .clear-filter {
+      padding: 10px 16px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-weight: 500;
+      cursor: pointer;
+      transition: 150ms ease;
+    }
+    
+    .clear-search:hover,
+    .clear-filter:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+    
+    /* Melhorias para responsividade */
+    @media (max-width: 768px) {
+      header { 
+        flex-direction: column; 
+        gap: 16px; 
+        padding: 16px;
+      }
+      
+      .toolbar { 
+        justify-content: center; 
+      }
+      
+      #totals-container { 
+        flex-direction: column; 
+        gap: 16px; 
+        text-align: center;
+      }
+      
+      .search-container,
+      .advanced-filter { 
+        flex-direction: column; 
+      }
+      
+      .search-input,
+      .filter-input,
+      .filter-field-select,
+      .date-filter-container {
+        width: 100%;
+      }
+      
+      /* Ajustes responsivos para as colunas modificadas */
+      td:nth-child(1) { /* Coluna Data */
+        width: 100px;
+      }
+      
+      td:nth-child(2) { /* Coluna Operação */
+        width: 140px;
+      }
+      
+      td:nth-child(7) { /* Coluna O.S */
+        width: 120px;
+      }
+    }
+    
+    /* Notificações */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      font-weight: 500;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    /* Estilos para o dropdown de operações */
+    .operations-container {
+      position: relative;
+      width: 100%;
+    }
+    
+    .operations-input {
+      width: 100%;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 6px;
+      outline: none;
+      transition: 150ms ease;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 40px;
+    }
+    
+    .operations-input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    
+    .operations-input.has-value {
+      background: var(--primary-light);
+      border-color: var(--accent-2);
+    }
+    
+    .dropdown-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      transition: transform 0.3s ease;
+      pointer-events: none;
+      font-size: 10px;
+    }
+    
+    .operations-container.open .dropdown-icon {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    
+    .operations-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      width: 100%;
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 8px 0;
+    }
+    
+    .operations-container.open .operations-dropdown {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    
+    .operation-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .operation-item:hover {
+      background: #f1f5f9;
+    }
+    
+    .operation-item.selected {
+      background: var(--primary-light);
+    }
+    
+    .operation-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--accent-2);
+      font-size: 14px;
+    }
+    
+    .operation-code {
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .operation-description {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+    
+    .clear-operation {
+      position: absolute;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      background: rgba(0,0,0,0.05);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    .clear-operation:hover {
+      color: var(--danger);
+      background: var(--danger-light);
+    }
+    
+    .operations-input.has-value:hover .clear-operation {
+      opacity: 1;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsividade para o dropdown */
+    @media (max-width: 768px) {
+      .operations-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 60vh;
+        border-radius: 12px 12px 0 0;
+        z-index: 1000;
+      }
+      
+      .operation-item {
+        padding: 16px;
+      }
+    }
+    
+    /* Estilo para linhas filtradas */
+    tr.filtered-out {
+      display: none;
+    }
+    
+    .search-info {
+      margin: 10px 0;
+      padding: 12px 16px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      font-size: 14px;
+      border-left: 3px solid var(--accent-2);
+    }
+    
+    /* Estilos para o filtro avançado */
+    .filter-field-select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 6px;
+      font-size: 14px;
+      min-width: 150px;
+    }
+    
+    /* Estilos para o seletor de data no filtro */
+    .date-filter-container {
+      position: relative;
+      flex: 1;
+      display: none;
+    }
+    
+    .date-filter-container.visible {
+      display: block;
+    }
+    
+    .date-filter-input {
+      width: 100%;
+      padding: 10px 16px;
+      padding-right: 40px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .date-filter-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      cursor: pointer;
+      pointer-events: none;
+    }
+    
+    /* Melhorias para os inputs numéricos */
+    input.num {
+      text-align: right;
+    }
+    
+    /* Adicionando espaçamento entre as seções */
+    main > div {
+      margin-bottom: 24px;
+    }
+    
+    /* Estilizando a barra de rolagem */
+    .table-wrap::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    .table-wrap::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    
+    .table-wrap::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    /* Adicionando um footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+</style>
+<body>
+  <header class="wrap">
+    <h1>Planilha de Campo</h1>
+    <div class="toolbar">
+      <button class="primary" id="addRow">+ Adicionar linha</button>
+      <button class="success" id="downloadJSON">Salvar JSON</button>
+      <button id="downloadCSV">Exportar CSV</button>
+      <label class="button" for="uploadJSON">Carregar JSON<input id="uploadJSON" type="file" accept="application/json" /></label>
+      <button class="danger" id="clearAll">Limpar tabela</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Filtro avançado -->
+    <div class="advanced-filter">
+      <select id="filterField" class="filter-field-select">
+        <option value="data">Data</option>
+        <option value="operacao">Operação</option>
+        <option value="c_tratamento">C. Tratamento</option>
+        <option value="c_custo">C. Custo</option>
+        <option value="fazenda">Fazenda</option>
+        <option value="talhao">Talhão</option>
+        <option value="os">O.S</option>
+        <option value="area">Área (ha)</option>
+        <option value="lamina">Lâmina (mm)</option>
+        <option value="experimento">Experimento</option>
+      </select>
+      
+      <!-- Campo de texto normal -->
+      <input type="text" id="filterValue" class="filter-input" placeholder="Digite o valor para pesquisar...">
+      
+      <!-- Container para o campo de data (inicialmente oculto) -->
+      <div id="dateFilterContainer" class="date-filter-container">
+        <input type="date" id="dateFilterValue" class="date-filter-input">
+        <span class="date-filter-icon">📅</span>
+      </div>
+      
+      <button id="applyFilter" class="filter-button">Filtrar</button>
+      <button id="clearFilter" class="clear-filter">Limpar filtro</button>
+    </div>
+    
+    <div id="filterInfo" class="search-info" style="display: none;"></div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table id="sheet">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Operação</th>
+              <th>C. Tratamento</th>
+              <th>C. Custo</th>
+              <th>Fazenda</th>
+              <th>Talhão</th>
+              <th>O.S</th>
+              <th>Área (ha)</th>
+              <th>Lâmina (mm)</th>
+              <th>Experimento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="totals-container">
+      <div>
+        <div>Área Total</div>
+        <span id="sumArea">0.00</span> ha
+      </div>
+      <div>
+        <div>Lâmina Total</div>
+        <span id="sumLamina">0.00</span> mm
+      </div>
+      <div>
+        <div>Total de Dias</div>
+        <span id="rowCount">0</span>
+      </div>
+    </div>
+
+    <div id="chart-controls">
+      <label for="periodSelect">Agrupar por:</label>
+      <select id="periodSelect">
+        <option value="daily">Dia</option>
+        <option value="weekly">Semana</option>
+        <option value="monthly">Mês</option>
+        <option value="annual">Ano</option>
+      </select>
+    </div>
+    <div id="chart-container">
+      <canvas id="areaChart" height="150"></canvas>
+    </div>
+  </main>
+
+  <footer>
+    Planilha de Campo &copy; 2025-Luis
+  </footer>
+
+  <template id="row-template">
+    <tr>
+      <td><input class="input" type="date" data-key="data" /></td>
+      <td>
+        <div class="operations-container">
+          <div class="operations-input" tabindex="0">
+            <span class="selected-value">Selecione</span>
+            <span class="clear-operation">×</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="operations-dropdown">
+            <div class="operation-item" data-value="3207">
+              
+              <span class="operation-code">3207</span>
+              
+            </div>
+            <div class="operation-item" data-value="3208">
+              <span class="operation-code">3208</span>
+              
+            </div>
+            <div class="operation-item" data-value="3212">
+              
+              <span class="operation-code">3212</span>
+              
+            </div>
+            <div class="operation-item" data-value="3213">
+             
+              <span class="operation-code">3213</span>
+             
+            </div>
+            <div class="operation-item" data-value="3214">
+              
+              <span class="operation-code">3214</span>
+             
+            </div>
+            <div class="operation-item" data-value="3215">
+            
+              <span class="operation-code">3215</span>
+              
+            </div>
+            <div class="operation-item" data-value="3217">
+             
+              <span class="operation-code">3217</span>
+              
+            </div>
+          </div>
+          <input type="hidden" class="input" data-key="operacao" />
+        </div>
+      </td>
+      <td><input class="input" type="text" placeholder="Ex.: T1, T2..." data-key="c_tratamento" /></td>
+      <td><input class="input" type="text" placeholder="CC-123" data-key="c_custo" /></td>
+      <td><input class="input" type="text" placeholder="Fazenda" data-key="fazenda" /></td>
+      <td><input class="input" type="text" placeholder="Talhão" data-key="talhao" /></td>
+      <td><input class="input" type="text" placeholder="Nº O.S" data-key="os" /></td>
+      <td><input class="input num" type="number" step="0.01" min="0" placeholder="0.00" data-key="area" /></td>
+      <td><input class="input num" type="number" step="0.01" min="0" placeholder="0.00" data-key="lamina" /></td>
+      <td><input class="input" type="text" placeholder="Obs./Experimento" data-key="experimento" /></td>
+      <td class="cell-actions">
+        <button title="Duplicar" data-action="dup">⎘</button>
+        <button title="Remover" data-action="del">✕</button>
+      </td>
+    </tr>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Função para mostrar notificações
+    function showNotification(message, duration = 3000) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, duration);
+    }
+
+    const STORAGE_KEY = 'planilha-campo-dados';
+    const body = document.getElementById('body');
+    const tpl = document.getElementById('row-template');
+    const periodSelect = document.getElementById('periodSelect');
+    const filterField = document.getElementById('filterField');
+    const filterValue = document.getElementById('filterValue');
+    const dateFilterContainer = document.getElementById('dateFilterContainer');
+    const dateFilterValue = document.getElementById('dateFilterValue');
+    const applyFilter = document.getElementById('applyFilter');
+    const clearFilter = document.getElementById('clearFilter');
+    const filterInfo = document.getElementById('filterInfo');
+
+    // Função para alternar entre os campos de filtro
+    function toggleFilterInput() {
+      const selectedField = filterField.value;
+      
+      if (selectedField === 'data') {
+        // Mostrar o campo de data e ocultar o campo de texto
+        filterValue.style.display = 'none';
+        dateFilterContainer.classList.add('visible');
+      } else {
+        // Mostrar o campo de texto and ocultar o campo de data
+        filterValue.style.display = 'block';
+        dateFilterContainer.classList.remove('visible');
+      }
+    }
+
+    // Inicializar o estado dos campos de filtro
+    toggleFilterInput();
+
+    // Adicionar evento para mudança no campo de seleção
+    filterField.addEventListener('change', toggleFilterInput);
+
+    function formatNumber(n) { return (Number(n) || 0).toFixed(2); }
+
+    function recalc() {
+      let area = 0, lamina = 0, rows = 0;
+      const grouped = {};
+      const laminaRules = {}; // regras por período
+
+      body.querySelectorAll('tr:not(.filtered-out)').forEach(tr => {
+        const a = Number(tr.querySelector('[data-key="area"]').value || 0);
+        const l = Number(tr.querySelector('[data-key="lamina"]').value || 0);
+        const dateStr = tr.querySelector('[data-key="data"]').value;
+        if(dateStr){
+          const date = new Date(dateStr);
+          let key;
+          switch(periodSelect.value){
+            case 'daily': key = dateStr; break;
+            case 'weekly': {
+              const onejan = new Date(date.getFullYear(), 0, 1);
+              const weekNum = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+              key = date.getFullYear() + '-W' + weekNum.toString().padStart(2, '0');
+            } break;
+            case 'monthly':
+              key = date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0');
+              break;
+            case 'annual': key = date.getFullYear(); break;
+          }
+          grouped[key] = (grouped[key]||0) + a;
+          laminaRules[key] = l; // salva a lamina referente
+        }
+        area += a;
+        lamina += l;
+        rows++;
+      });
+      document.getElementById('sumArea').textContent = formatNumber(area);
+      document.getElementById('sumLamina').textContent = formatNumber(lamina);
+      document.getElementById('rowCount').textContent = rows;
+
+      updateChart(grouped, laminaRules);
+    }
+
+    function rowToObj(tr){
+      const obj = {};
+      tr.querySelectorAll('input, select').forEach(inp => {
+        if (inp.tagName === 'SELECT') {
+          obj[inp.dataset.key] = inp.value || '';
+        } else {
+          obj[inp.dataset.key] = inp.type==='number'?Number(inp.value||0):inp.value||'';
+        }
+      });
+      return obj;
+    }
+
+    function objToRow(obj={}){
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      
+      // Preencher os campos
+      node.querySelectorAll('input, select').forEach(inp=>{
+        const v = obj[inp.dataset.key];
+        if(v!==undefined&&v!==null) {
+          if (inp.type === 'number') {
+            inp.value = Number(v);
+          } else if (inp.tagName === 'SELECT') {
+            inp.value = v;
+          } else {
+            inp.value = v;
+          }
+        }
+        
+        // Adicionar event listeners para campos de entrada de texto
+        if (inp.type === 'text' || inp.type === 'number') {
+          inp.addEventListener('input', ()=>{ save(); recalc(); });
+        }
+        
+        // Adicionar event listeners para selects
+        if (inp.tagName === 'SELECT') {
+          inp.addEventListener('change', ()=>{ save(); recalc(); });
+        }
+      });
+      
+      // Configurar o dropdown de operações
+      const operationsContainer = node.querySelector('.operations-container');
+      const operationInput = operationsContainer.querySelector('input[data-key="operacao"]');
+      const operationsInput = operationsContainer.querySelector('.operations-input');
+      const selectedValue = operationsInput.querySelector('.selected-value');
+      const clearBtn = operationsInput.querySelector('.clear-operation');
+      const dropdown = operationsContainer.querySelector('.operations-dropdown');
+      
+      // Preencher com valor existente se houver
+      if (obj.operacao) {
+        const selectedOperation = dropdown.querySelector(`[data-value="${obj.operacao}"]`);
+        if (selectedOperation) {
+          selectedValue.textContent = selectedOperation.querySelector('.operation-code').textContent;
+          selectedValue.dataset.value = obj.operacao;
+          operationsInput.classList.add('has-value');
+          operationInput.value = obj.operacao;
+        }
+      }
+      
+      // Abrir/fechar dropdown
+      operationsInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        operationsContainer.classList.toggle('open');
+      });
+      
+      // Selecionar uma operação
+      dropdown.querySelectorAll('.operation-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const value = item.getAttribute('data-value');
+          const code = item.querySelector('.operation-code').textContent;
+          
+          // Atualizar a exibição
+          selectedValue.textContent = code;
+          selectedValue.dataset.value = value;
+          operationsInput.classList.add('has-value');
+          
+          // Atualizar o campo hidden
+          operationInput.value = value;
+          operationInput.dispatchEvent(new Event('input', { bubbles: true }));
+          
+          // Fechar o dropdown
+          operationsContainer.classList.remove('open');
+        });
+      });
+      
+      // Limpar seleção
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectedValue.textContent = 'Selecione uma operação';
+        selectedValue.dataset.value = '';
+        operationsInput.classList.remove('has-value');
+        operationInput.value = '';
+        operationInput.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      
+      // Fechar dropdown ao clicar fora
+      document.addEventListener('click', (e) => {
+        if (!operationsContainer.contains(e.target)) {
+          operationsContainer.classList.remove('open');
+        }
+      });
+      
+      // Botões de ação
+      node.querySelector('[data-action="del"]').addEventListener('click', ()=>{ node.remove(); save(); recalc(); });
+      node.querySelector('[data-action="dup"]').addEventListener('click', ()=>{ const clone=objToRow(rowToObj(node)); node.after(clone); save(); recalc(); });
+      
+      return node;
+    }
+
+    function addRow(data={}){ 
+      const row=objToRow(data); 
+      body.appendChild(row); 
+      
+      // Focar no primeiro campo (data)
+      const firstInput = row.querySelector('input');
+      if (firstInput) {
+        firstInput.focus();
+      }
+      
+      save(); 
+      recalc(); 
+    }
+    
+    function save(){ 
+      const data=Array.from(body.querySelectorAll('tr')).map(rowToObj); 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); 
+    }
+    
+    function load(){ 
+      const raw=localStorage.getItem(STORAGE_KEY); 
+      if(!raw) return; 
+      try{ 
+        const data=JSON.parse(raw); 
+        body.innerHTML=''; 
+        data.forEach(item=>addRow(item)); 
+      }catch(e){
+        console.error(e);
+      } 
+      recalc(); 
+    }
+
+    function download(filename,text){ 
+      const blob=new Blob([text],{type:'application/octet-stream'}); 
+      const url=URL.createObjectURL(blob); 
+      const a=document.createElement('a'); 
+      a.href=url;
+      a.download=filename;
+      a.click(); 
+      URL.revokeObjectURL(url); 
+      showNotification(`Arquivo ${filename} baixado com sucesso!`);
+    }
+    
+    function toCSV(arr){ 
+      const headers=['data','operacao','c_tratamento','c_custo','fazenda','talhao','os','area','lamina','experimento']; 
+      const lines=[headers.join(';')]; 
+      arr.forEach(o=>{ 
+        const row=headers.map(h=>{ 
+          let v=o[h]; 
+          if(typeof v==='string'){ 
+            v='"'+v.replaceAll('"','""')+'"'; 
+          } 
+          return v??''; 
+        }).join(';'); 
+        lines.push(row); 
+      }); 
+      return lines.join('\n'); 
+    }
+
+    // Função para aplicar filtro avançado
+    function applyAdvancedFilter() {
+      const field = filterField.value;
+      let value;
+      
+      // Obter o valor do campo correto
+      if (field === 'data') {
+        value = dateFilterValue.value;
+      } else {
+        value = filterValue.value.trim().toLowerCase();
+      }
+      
+      if (!value) {
+        clearFilterResults();
+        return;
+      }
+      
+      let matchCount = 0;
+      
+      body.querySelectorAll('tr').forEach(tr => {
+        let input;
+        input = tr.querySelector(`[data-key="${field}"]`);
+        
+        if (!input) {
+          tr.classList.add('filtered-out');
+          return;
+        }
+        
+        let inputValue;
+        
+        // Formatar o valor para comparação
+        if (field === 'data') {
+          // Para datas, comparar diretamente o valor
+          inputValue = input.value;
+        } else {
+          // Para outros campos, converter para minúsculas
+          inputValue = input.value.toString().toLowerCase();
+          value = value.toLowerCase();
+        }
+        
+        // Verificar se o valor corresponde à pesquisa
+        if (inputValue.includes(value)) {
+          tr.classList.remove('filtered-out');
+          matchCount++;
+        } else {
+          tr.classList.add('filtered-out');
+        }
+      });
+      
+      // Atualizar informações do filtro
+      if (matchCount > 0) {
+        const fieldNames = {
+          'data': 'Data',
+          'operacao': 'Operação',
+          'c_tratamento': 'C. Tratamento',
+          'c_custo': 'C. Custo',
+          'fazenda': 'Fazenda',
+          'talhao': 'Talhão',
+          'os': 'O.S',
+          'area': 'Área (ha)',
+          'lamina': 'Lâmina (mm)',
+          'experimento': 'Experimento'
+        };
+        
+        filterInfo.textContent = `Mostrando ${matchCount} registro(s) onde ${fieldNames[field]} contém "${value}"`;
+        filterInfo.style.display = 'block';
+      } else {
+        filterInfo.textContent = `Nenhum registro encontrado para "${value}" no campo ${fieldNames[field]}`;
+        filterInfo.style.display = 'block';
+      }
+      
+      recalc();
+    }
+    
+    // Função para limpar resultados do filtro
+    function clearFilterResults() {
+      body.querySelectorAll('tr').forEach(tr => {
+        tr.classList.remove('filtered-out');
+      });
+      
+      filterValue.value = '';
+      dateFilterValue.value = '';
+      filterInfo.style.display = 'none';
+      recalc();
+    }
+
+    // Configuração dos event listeners para os botões
+    document.getElementById('addRow').addEventListener('click', ()=> {
+      addRow();
+      showNotification('Nova linha adicionada');
+    });
+    
+    document.getElementById('clearAll').addEventListener('click', ()=>{ 
+      if(confirm('Tem certeza que deseja limpar toda a tabela? Esta ação não pode be desfeita.')){ 
+        body.innerHTML=''; 
+        save(); 
+        recalc(); 
+        showNotification('Tabela limpa com sucesso');
+      } 
+    });
+    
+    document.getElementById('downloadJSON').addEventListener('click', ()=>{ 
+      const data=Array.from(body.querySelectorAll('tr')).map(rowToObj); 
+      if (data.length === 0) {
+        showNotification('Não há dados para salvar', 2000);
+        return;
+      }
+      download(`planilha-campo-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(data,null,2)); 
+    });
+    
+    document.getElementById('downloadCSV').addEventListener('click', ()=>{ 
+      const data=Array.from(body.querySelectorAll('tr')).map(rowToObj); 
+      if (data.length === 0) {
+        showNotification('Não há dados para exportar', 2000);
+        return;
+      }
+      download(`planilha-campo-${new Date().toISOString().slice(0,10)}.csv`, toCSV(data)); 
+    });
+    
+    document.getElementById('uploadJSON').addEventListener('change', e=>{ 
+      const f=e.target.files?.[0]; 
+      if(!f) return; 
+      const reader=new FileReader(); 
+      reader.onload=()=>{ 
+        try{ 
+          const data=JSON.parse(reader.result); 
+          body.innerHTML=''; 
+          data.forEach(item=>addRow(item)); 
+          save(); 
+          recalc(); 
+          showNotification('Dados carregados com sucesso!');
+        }catch(err){ 
+          showNotification('Erro: Arquivo JSON inválido', 3000);
+        } 
+      }; 
+      reader.readAsText(f); 
+      e.target.value=''; 
+    });
+    
+    periodSelect.addEventListener('change', recalc);
+    
+    // Event listeners para o filtro avançado
+    applyFilter.addEventListener('click', applyAdvancedFilter);
+    
+    clearFilter.addEventListener('click', clearFilterResults);
+    
+    // Permitir pressionar Enter para filtrar
+    filterValue.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        applyAdvancedFilter();
+      }
+    });
+
+    let chart;
+    function updateChart(grouped, laminaRules){
+      const labels = Object.keys(grouped).sort();
+      const data = labels.map(l=>grouped[l]);
+
+      let formattedLabels = labels;
+      if (periodSelect.value === 'monthly') {
+        formattedLabels = labels.map(label => {
+          const [year, month] = label.split('-');
+          const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+          return `${monthNames[parseInt(month)-1]}/${year}`;
+        });
+      } else if (periodSelect.value === 'weekly') {
+        formattedLabels = labels.map(label => {
+          const [year, week] = label.split('-W');
+          return `Sem ${week}/${year}`;
+        });
+      }
+
+      // Cores de acordo com as regras de lâmina
+      const colors = labels.map(label => {
+        const v = grouped[label]; // área
+        const lamina = laminaRules[label]; // lamina usada
+
+        if (lamina === 60) {
+          if (v < 16) return 'rgba(239,68,68,0.8)'; // vermelho
+          if (v > 19) return 'rgba(34,197,94,0.8)'; // verde
+        }
+        if (lamina === 40) {
+          if (v < 26) return 'rgba(239,68,68,0.8)';
+          if (v > 29) return 'rgba(34,197,94,0.8)';
+        }
+        return 'rgba(96,165,250,0.7)'; // azul padrão
+      });
+
+      if(chart){ 
+        chart.data.labels = formattedLabels; 
+        chart.data.datasets[0].data = data; 
+        chart.data.datasets[0].backgroundColor = colors;
+        chart.update(); 
+        return; 
+      }
+
+      const ctx = document.getElementById('areaChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: { 
+          labels: formattedLabels, 
+          datasets: [{
+            label: 'Área (ha)', 
+            data: data, 
+            backgroundColor: colors,
+            borderColor: 'rgba(96,165,250,1)',
+            borderWidth: 1
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          plugins: { 
+            legend: { display: true, labels: { color: '#64748b' } },
+            title: { display: true, text: 'Área por Período', color: '#1e293b', font: { size: 16 } }
+          }, 
+          scales: { 
+            y: { 
+              beginAtZero: true, 
+              ticks: { color: '#64748b' }, 
+              grid: { color: 'rgba(0,0,0,0.05)' } 
+            },
+            x: { 
+              ticks: { color: '#64748b' }, 
+              grid: { color: 'rgba(0,0,0,0.05)' } 
+            }
+          } 
+        }
+      });
+    }
+
+    // Salvar dados automaticamente antes de sair da página
+    window.addEventListener('beforeunload', () => {
+      save();
+    });
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', ()=>{ 
+      load(); 
+      if(body.children.length===0) addRow(); 
+      showNotification('Planilha de campo carregada com sucesso!', 2000);
+    });
+  </script>
+</body>
+</html>
