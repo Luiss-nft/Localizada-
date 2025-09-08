@@ -744,6 +744,7 @@
             <div class="modal-veiculos-footer">
                 <button class="btn" onclick="fecharModalVeiculos()">Fechar</button>
             </div>
+            </div>
         </div>
     </div>
 
@@ -972,14 +973,20 @@
                 // Filtrar registros apenas desta frota
                 const registrosFrota = registrosFiltrados.filter(r => r.frota === frota);
                 
-                // Ordenar por data (mais recente primeiro)
+                // Ordenar por data e hora (mais recente primeiro)
                 registrosFrota.sort((a, b) => {
                     // Primeiro por data
                     if (a.data !== b.data) {
                         return new Date(b.data) - new Date(a.data);
                     }
-                    // Se for a mesma data, ordenar por hora de início (mais recente primeiro)
-                    return b.horaInicio.localeCompare(a.horaInicio);
+                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
+                    // Converter hora para minutos para comparação precisa
+                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
+                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
+                    const minutosBFim = horaBFim * 60 + minutoBFim;
+                    const minutosAFim = horaAFim * 60 + minutoAFim;
+                    
+                    return minutosBFim - minutosAFim;
                 });
                 
                 // Pegar o registro mais recente
@@ -1426,7 +1433,7 @@
             // Salvar dados localmente
             salvarDadosLocal();
             
-            // Recarregar tabela и fechar modal
+            // Recarregar tabela e fechar modal
             carregarRegistros();
             atualizarResumo();
             atualizarGraficos();
@@ -1561,12 +1568,19 @@
                 // Filtrar registros apenas desta frota
                 const registrosFrota = registros.filter(r => r.frota === frota);
                 
-                // Ordenar por data (mais recente primeiro)
+                // Ordenar por data e hora (mais recente primeiro)
                 registrosFrota.sort((a, b) => {
                     if (a.data !== b.data) {
                         return new Date(b.data) - new Date(a.data);
                     }
-                    return b.horaInicio.localeCompare(a.horaInicio);
+                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
+                    // Converter hora para minutos para comparação precisa
+                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
+                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
+                    const minutosBFim = horaBFim * 60 + minutoBFim;
+                    const minutosAFim = horaAFim * 60 + minutoAFim;
+                    
+                    return minutosBFim - minutosAFim;
                 });
                 
                 // Pegar o registro mais recente
@@ -1580,6 +1594,7 @@
                         <strong>${frota}</strong>
                         <div>${ultimoRegistro.classe}</div>
                         <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
+                        <div class="veiculo-operacao">Último registro: ${formatarData(ultimoRegistro.data)} ${ultimoRegistro.horaFim}</div>
                     `;
                     lista.appendChild(div);
                 }
@@ -1604,12 +1619,19 @@
                 // Filtrar registros apenas desta frota
                 const registrosFrota = registros.filter(r => r.frota === frota);
                 
-                // Ordenar por data (mais recente primeiro)
+                // Ordenar por data e hora (mais recente primeiro)
                 registrosFrota.sort((a, b) => {
                     if (a.data !== b.data) {
                         return new Date(b.data) - new Date(a.data);
                     }
-                    return b.horaInicio.localeCompare(a.horaInicio);
+                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
+                    // Converter hora para minutos para comparação precisa
+                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
+                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
+                    const minutosBFim = horaBFim * 60 + minutoBFim;
+                    const minutosAFim = horaAFim * 60 + minutoAFim;
+                    
+                    return minutosBFim - minutosAFim;
                 });
                 
                 // Pegar o registro mais recente
@@ -1623,6 +1645,7 @@
                         <strong>${frota}</strong>
                         <div>${ultimoRegistro.classe}</div>
                         <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
+                        <div class="veiculo-operacao">Último registro: ${formatarData(ultimoRegistro.data)} ${ultimoRegistro.horaFim}</div>
                     `;
                     lista.appendChild(div);
                 }
