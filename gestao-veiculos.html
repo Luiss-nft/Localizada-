@@ -883,6 +883,21 @@
                 registrosFiltrados = registrosFiltrados.filter(r => r.operacao === filtros.operacao);
             }
             
+            // Ordenar registros por data e hora (mais recentes primeiro)
+            registrosFiltrados.sort((a, b) => {
+                // Primeiro por data (mais recente primeiro)
+                if (a.data !== b.data) {
+                    return new Date(b.data) - new Date(a.data);
+                }
+                // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
+                const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
+                const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
+                const minutosBFim = horaBFim * 60 + minutoBFim;
+                const minutosAFim = horaAFim * 60 + minutoAFim;
+                
+                return minutosBFim - minutosAFim;
+            });
+            
             // Atualizar contador
             document.getElementById('total-registros').textContent = `${registrosFiltrados.length} registros encontrados`;
             
@@ -1098,8 +1113,10 @@
             // Calcular horas perdidas por chuva
             const horasChuva = totaisPorOperacao['CHUVA'] || 0;
             
-            // Calcular outras horas improdutivas (excluindo PRO, RESERVA e AGUAR. CONSERT)
-            const outrasOperacoes = Object.keys(totaisPorOperacao).filter(op => op !== 'PRO' && op !== 'RESERVA' && op !== 'AGUAR. CONSERT');
+            // Calcular outras horas improdutivas (excluindo PRO, RESERVA, AGUAR. CONSERT e CHUVA)
+            const outrasOperacoes = Object.keys(totaisPorOperacao).filter(op => 
+                op !== 'PRO' && op !== 'RESERVA' && op !== 'AGUAR. CONSERT' && op !== 'CHUVA'
+            );
             const outrasHorasImprodutivas = outrasOperacoes.reduce((acc, op) => acc + (totaisPorOperacao[op] || 0), 0);
             
             // Preparar dados para o gráfico de operações (barras com porcentagens)
@@ -1119,7 +1136,7 @@
                 }]
             };
             
-            // Preparar dados para o gráfico de impacto (pizza com horas)
+            // Preparar dados para o gráfico de impacto (pizza com porcentagens)
             const impactoData = {
                 labels: ['Produtiva', 'Reserva', 'Horas Perdidas por Chuva', 'Outras Paradas'],
                 datasets: [{
@@ -1197,7 +1214,9 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.label}: ${context.raw.toFixed(1)} horas`;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.raw / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.raw.toFixed(1)} horas (${percentage}%)`;
                                 }
                             }
                         }
