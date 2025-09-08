@@ -138,6 +138,13 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .summary-card h3 {
@@ -373,6 +380,74 @@
             transform: translateY(0);
         }
         
+        .modal-veiculos {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-veiculos-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 800px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-veiculos-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-veiculos-header h2 {
+            color: #2c3e50;
+        }
+        
+        .modal-veiculos-body {
+            padding: 20px;
+        }
+        
+        .modal-veiculos-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .lista-veiculos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .veiculo-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .veiculo-item.parado {
+            border-left-color: #e74c3c;
+        }
+        
+        .veiculo-operacao {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
         @media (max-width: 768px) {
             .charts-container {
                 grid-template-columns: 1fr;
@@ -389,6 +464,10 @@
             
             .btn {
                 width: 100%;
+            }
+            
+            .lista-veiculos {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -469,12 +548,12 @@
                 <h3>Total de Veículos</h3>
                 <div class="value" id="total-veiculos">0</div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" onclick="mostrarVeiculosOperacao()">
                 <h3>Em Operação</h3>
                 <div class="value" id="em-operacao">0</div>
             </div>
-            <div class="summary-card">
-                <h3>Em Manutenção</h3>
+            <div class="summary-card" onclick="mostrarVeiculosParados()">
+                <h3>Parados</h3>
                 <div class="value" id="em-manutencao">0</div>
             </div>
             <div class="summary-card">
@@ -646,6 +725,24 @@
             <div class="modal-footer">
                 <button class="btn" onclick="fecharModal()">Cancelar</button>
                 <button class="btn btn-primary" onclick="salvarRegistro()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar veículos em operação -->
+    <div class="modal-veiculos" id="modalVeiculos">
+        <div class="modal-veiculos-content">
+            <div class="modal-veiculos-header">
+                <h2 id="modalVeiculosTitulo">Veículos</h2>
+                <span style="cursor: pointer;" onclick="fecharModalVeiculos()">×</span>
+            </div>
+            <div class="modal-veiculos-body">
+                <div class="lista-veiculos" id="lista-veiculos">
+                    <!-- Lista de veículos será carregada aqui -->
+                </div>
+            </div>
+            <div class="modal-veiculos-footer">
+                <button class="btn" onclick="fecharModalVeiculos()">Fechar</button>
             </div>
         </div>
     </div>
@@ -858,14 +955,43 @@
             }
             
             // Calcular totais
-            const totalVeiculos = new Set(registrosFiltrados.map(r => r.frota)).size;
-            const emOperacao = registrosFiltrados.filter(r => r.operacao === 'PRO').length;
-            const emManutencao = registrosFiltrados.filter(r => r.operacao !== 'PRO').length;
+            const frotasUnicas = [...new Set(registrosFiltrados.map(r => r.frota))];
+            const totalVeiculos = frotasUnicas.length;
             
             // Calcular horas produtivas (apenas registros PRO)
             const horasProdutivas = registrosFiltrados
                 .filter(r => r.operacao === 'PRO')
                 .reduce((total, r) => total + r.horaTotal, 0) / 60; // Converter minutos para horas
+            
+            // Calcular veículos em operação e em manutenção
+            let emOperacao = 0;
+            let emManutencao = 0;
+            
+            // Para cada frota única, encontrar o último registro (mais recente)
+            frotasUnicas.forEach(frota => {
+                // Filtrar registros apenas desta frota
+                const registrosFrota = registrosFiltrados.filter(r => r.frota === frota);
+                
+                // Ordenar por data (mais recente primeiro)
+                registrosFrota.sort((a, b) => {
+                    // Primeiro por data
+                    if (a.data !== b.data) {
+                        return new Date(b.data) - new Date(a.data);
+                    }
+                    // Se for a mesma data, ordenar por hora de início (mais recente primeiro)
+                    return b.horaInicio.localeCompare(a.horaInicio);
+                });
+                
+                // Pegar o registro mais recente
+                const ultimoRegistro = registrosFrota[0];
+                
+                // Verificar se está em operação (PRO) ou manutenção (qualquer outra coisa)
+                if (ultimoRegistro.operacao === 'PRO') {
+                    emOperacao++;
+                } else {
+                    emManutencao++;
+                }
+            });
             
             // Atualizar elementos
             document.getElementById('total-veiculos').textContent = totalVeiculos;
@@ -1300,7 +1426,7 @@
             // Salvar dados localmente
             salvarDadosLocal();
             
-            // Recarregar tabela e fechar modal
+            // Recarregar tabela и fechar modal
             carregarRegistros();
             atualizarResumo();
             atualizarGraficos();
@@ -1417,6 +1543,97 @@
         function formatarData(dataStr) {
             const data = new Date(dataStr);
             return data.toLocaleDateString('pt-BR');
+        }
+
+        // Função para mostrar veículos em operação
+        function mostrarVeiculosOperacao() {
+            const modal = document.getElementById('modalVeiculos');
+            const titulo = document.getElementById('modalVeiculosTitulo');
+            const lista = document.getElementById('lista-veiculos');
+            
+            titulo.textContent = 'Veículos em Operação';
+            lista.innerHTML = '';
+            
+            // Obter frotas únicas
+            const frotasUnicas = [...new Set(registros.map(r => r.frota))];
+            
+            frotasUnicas.forEach(frota => {
+                // Filtrar registros apenas desta frota
+                const registrosFrota = registros.filter(r => r.frota === frota);
+                
+                // Ordenar por data (mais recente primeiro)
+                registrosFrota.sort((a, b) => {
+                    if (a.data !== b.data) {
+                        return new Date(b.data) - new Date(a.data);
+                    }
+                    return b.horaInicio.localeCompare(a.horaInicio);
+                });
+                
+                // Pegar o registro mais recente
+                const ultimoRegistro = registrosFrota[0];
+                
+                // Verificar se está em operação (PRO)
+                if (ultimoRegistro.operacao === 'PRO') {
+                    const div = document.createElement('div');
+                    div.className = 'veiculo-item';
+                    div.innerHTML = `
+                        <strong>${frota}</strong>
+                        <div>${ultimoRegistro.classe}</div>
+                        <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
+                    `;
+                    lista.appendChild(div);
+                }
+            });
+            
+            modal.style.display = 'flex';
+        }
+        
+        // Função para mostrar veículos parados
+        function mostrarVeiculosParados() {
+            const modal = document.getElementById('modalVeiculos');
+            const titulo = document.getElementById('modalVeiculosTitulo');
+            const lista = document.getElementById('lista-veiculos');
+            
+            titulo.textContent = 'Veículos Parados';
+            lista.innerHTML = '';
+            
+            // Obter frotas únicas
+            const frotasUnicas = [...new Set(registros.map(r => r.frota))];
+            
+            frotasUnicas.forEach(frota => {
+                // Filtrar registros apenas desta frota
+                const registrosFrota = registros.filter(r => r.frota === frota);
+                
+                // Ordenar por data (mais recente primeiro)
+                registrosFrota.sort((a, b) => {
+                    if (a.data !== b.data) {
+                        return new Date(b.data) - new Date(a.data);
+                    }
+                    return b.horaInicio.localeCompare(a.horaInicio);
+                });
+                
+                // Pegar o registro mais recente
+                const ultimoRegistro = registrosFrota[0];
+                
+                // Verificar se está parado (não é PRO)
+                if (ultimoRegistro.operacao !== 'PRO') {
+                    const div = document.createElement('div');
+                    div.className = 'veiculo-item parado';
+                    div.innerHTML = `
+                        <strong>${frota}</strong>
+                        <div>${ultimoRegistro.classe}</div>
+                        <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
+                    `;
+                    lista.appendChild(div);
+                }
+            });
+            
+            modal.style.display = 'flex';
+        }
+        
+        // Função para fechar modal de veículos
+        function fecharModalVeiculos() {
+            document.getElementById('modalVeiculos').style.display = 'none';
         }
     </script>
 </body>
