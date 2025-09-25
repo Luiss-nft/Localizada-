@@ -372,6 +372,36 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Modal de seleção de tanques */
+        .tanques-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .tanques-container h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .tanques-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tanque-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tanque-item input[type="checkbox"] {
+            margin: 0;
+        }
         
         @media (max-width: 768px) {
             .charts-container {
@@ -389,6 +419,10 @@
             
             .btn {
                 width: 100%;
+            }
+            
+            .tanques-lista {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -641,6 +675,15 @@
                             <input type="text" id="modalHoraTotal" readonly>
                         </div>
                     </div>
+                    
+                    <!-- Seção para seleção de tanques (aparece apenas para caminhões) -->
+                    <div class="tanques-container" id="tanquesContainer" style="display: none;">
+                        <h4>Tanques Associados</h4>
+                        <div class="tanques-lista" id="tanquesLista">
+                            <!-- Os tanques serão carregados aqui via JavaScript -->
+                        </div>
+                        <small>Selecione 2 tanques para associar a este caminhão</small>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -712,6 +755,18 @@
             'FALTA COMBUSTIVEL': '#c0392b' // Vermelho escuro
         };
 
+        // Lista de tanques disponíveis
+        const tanquesDisponiveis = [
+            { id: '606001', nome: '606001 - TANQUE TP' },
+            { id: '606002', nome: '606002 - TANQUE TP' },
+            { id: '606003', nome: '606003 - TANQUE TP' },
+            { id: '606004', nome: '606004 - TANQUE TP' },
+            { id: '606005', nome: '606005 - TANQUE TP' },
+            { id: '606006', nome: '606006 - TANQUE TP' },
+            { id: '606007', nome: '606007 - TANQUE TP' },
+            { id: '606008', nome: '606008 - TANQUE TP' }
+        ];
+
         // Variáveis para os gráficos
         let operacaoChart = null;
         let impactoChart = null;
@@ -763,6 +818,9 @@
             document.getElementById('modalData').value = hoje;
             document.getElementById('dataInicio').value = hoje;
             document.getElementById('dataFim').value = hoje;
+            
+            // Adicionar listener para mudança de frota no modal
+            document.getElementById('modalFrota').addEventListener('change', atualizarTanques);
         });
 
         // Função para carregar registros na tabela
@@ -1090,6 +1148,9 @@
                 
                 // Preencher data atual
                 document.getElementById('modalData').value = new Date().toISOString().split('T')[0];
+                
+                // Atualizar tanques baseado na frota selecionada
+                atualizarTanques();
             }
             
             modal.style.display = 'flex';
@@ -1115,6 +1176,9 @@
                 document.getElementById('modalHoraInicio').value = registro.horaInicio;
                 document.getElementById('modalHoraFim').value = registro.horaFim;
                 document.getElementById('modalHoraTotal').value = registro.horaTotal;
+                
+                // Atualizar tanques baseado na frota selecionada
+                atualizarTanques();
             }
         }
         
@@ -1123,12 +1187,51 @@
             const frota = document.getElementById('modalFrota').value;
             const classe = mapeamentoFrotas[frota] || '';
             document.getElementById('modalClasse').value = classe;
+            
+            // Atualizar tanques baseado na frota selecionada
+            atualizarTanques();
         }
         
         // Função para atualizar tipo de operação baseado na operação selecionada
         function atualizarTipoOperacao() {
             const operacao = document.getElementById('modalOperacao').value;
             document.getElementById('modalTipoOper').value = mapeamentoOperacoes[operacao] || '';
+        }
+        
+        // Função para atualizar a lista de tanques baseado na frota selecionada
+        function atualizarTanques() {
+            const frota = document.getElementById('modalFrota').value;
+            const classe = mapeamentoFrotas[frota] || '';
+            const tanquesContainer = document.getElementById('tanquesContainer');
+            const tanquesLista = document.getElementById('tanquesLista');
+            
+            // Mostrar apenas para caminhões
+            if (classe === 'CAMINHÃO') {
+                tanquesContainer.style.display = 'block';
+                
+                // Limpar lista atual
+                tanquesLista.innerHTML = '';
+                
+                // Adicionar tanques à lista
+                tanquesDisponiveis.forEach(tanque => {
+                    const div = document.createElement('div');
+                    div.className = 'tanque-item';
+                    div.innerHTML = `
+                        <input type="checkbox" id="tanque_${tanque.id}" name="tanques" value="${tanque.id}">
+                        <label for="tanque_${tanque.id}">${tanque.nome}</label>
+                    `;
+                    tanquesLista.appendChild(div);
+                });
+            } else {
+                tanquesContainer.style.display = 'none';
+            }
+        }
+        
+        // Função para obter tanques selecionados
+        function obterTanquesSelecionados() {
+            const checkboxes = document.querySelectorAll('input[name="tanques"]:checked');
+            const tanquesSelecionados = Array.from(checkboxes).map(cb => cb.value);
+            return tanquesSelecionados;
         }
         
         // Função para calcular hora total
@@ -1162,6 +1265,15 @@
             const horaFim = document.getElementById('modalHoraFim').value;
             const horaTotal = document.getElementById('modalHoraTotal').value;
             
+            // Verificar se é um caminhão e se precisa de tanques
+            const tanquesSelecionados = obterTanquesSelecionados();
+            const precisaTanques = classe === 'CAMINHÃO';
+            
+            if (precisaTanques && tanquesSelecionados.length !== 2) {
+                alert('Para caminhões, é necessário selecionar exatamente 2 tanques.');
+                return;
+            }
+            
             if (id) {
                 // Editar registro existente
                 const index = registros.findIndex(r => r.id === parseInt(id));
@@ -1182,7 +1294,7 @@
             } else {
                 // Adicionar novo registro
                 const novoId = registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1;
-                registros.push({
+                const novoRegistro = {
                     id: novoId,
                     data,
                     frota,
@@ -1193,7 +1305,28 @@
                     horaFim,
                     horaTotal: parseInt(horaTotal),
                     os
-                });
+                };
+                
+                registros.push(novoRegistro);
+                
+                // Se for um caminhão com tanques selecionados, criar registros para os tanques
+                if (precisaTanques) {
+                    tanquesSelecionados.forEach(tanqueId => {
+                        const tanqueRegistro = {
+                            id: registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1,
+                            data,
+                            frota: tanqueId,
+                            classe: 'TANQUE TP',
+                            operacao: operacao === 'PRO' ? 'PRO' : 'AGUAR. CONSERT',
+                            tipoOper: operacao === 'PRO' ? 'PRO' : 'AGUAR. CONSERT',
+                            horaInicio,
+                            horaFim,
+                            horaTotal: parseInt(horaTotal),
+                            os
+                        };
+                        registros.push(tanqueRegistro);
+                    });
+                }
                 
                 // Verificar se é uma operação PRO que termina às 23:59
                 if (operacao === 'PRO' && horaFim === '23:59') {
@@ -1233,6 +1366,9 @@
                         document.getElementById('modalOs').value = '';
                         calcularHoraTotal();
                         
+                        // Atualizar tanques
+                        atualizarTanques();
+                        
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Próximo Dia)';
                         document.getElementById('modalRegistro').style.display = 'flex';
@@ -1261,6 +1397,9 @@
                         document.getElementById('modalOs').value = '';
                         document.getElementById('modalHoraTotal').value = '';
                         
+                        // Atualizar tanques
+                        atualizarTanques();
+                        
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Parada)';
                         document.getElementById('modalRegistro').style.display = 'flex';
@@ -1288,6 +1427,9 @@
                         document.getElementById('modalTipoOper').value = 'PRO';
                         document.getElementById('modalOs').value = '';
                         calcularHoraTotal();
+                        
+                        // Atualizar tanques
+                        atualizarTanques();
                         
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Produção)';
