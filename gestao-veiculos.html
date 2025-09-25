@@ -138,13 +138,6 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .summary-card h3 {
@@ -379,73 +372,35 @@
             opacity: 1;
             transform: translateY(0);
         }
-        
-        .modal-veiculos {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+
+        /* Modal de seleção de tanques */
+        .tanques-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
         }
         
-        .modal-veiculos-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 800px;
-            max-width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-veiculos-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-veiculos-header h2 {
+        .tanques-container h4 {
+            margin-bottom: 10px;
             color: #2c3e50;
         }
         
-        .modal-veiculos-body {
-            padding: 20px;
-        }
-        
-        .modal-veiculos-footer {
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .lista-veiculos {
+        .tanques-lista {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
         }
         
-        .veiculo-item {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #3498db;
+        .tanque-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        .veiculo-item.parado {
-            border-left-color: #e74c3c;
-        }
-        
-        .veiculo-operacao {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-top: 5px;
+        .tanque-item input[type="checkbox"] {
+            margin: 0;
         }
         
         @media (max-width: 768px) {
@@ -466,7 +421,7 @@
                 width: 100%;
             }
             
-            .lista-veiculos {
+            .tanques-lista {
                 grid-template-columns: 1fr;
             }
         }
@@ -548,12 +503,12 @@
                 <h3>Total de Veículos</h3>
                 <div class="value" id="total-veiculos">0</div>
             </div>
-            <div class="summary-card" onclick="mostrarVeiculosOperacao()">
+            <div class="summary-card">
                 <h3>Em Operação</h3>
                 <div class="value" id="em-operacao">0</div>
             </div>
-            <div class="summary-card" onclick="mostrarVeiculosParados()">
-                <h3>Parados</h3>
+            <div class="summary-card">
+                <h3>Em Manutenção</h3>
                 <div class="value" id="em-manutencao">0</div>
             </div>
             <div class="summary-card">
@@ -720,30 +675,20 @@
                             <input type="text" id="modalHoraTotal" readonly>
                         </div>
                     </div>
+                    
+                    <!-- Seção para seleção de tanques (aparece apenas para caminhões) -->
+                    <div class="tanques-container" id="tanquesContainer" style="display: none;">
+                        <h4>Tanques Associados</h4>
+                        <div class="tanques-lista" id="tanquesLista">
+                            <!-- Os tanques serão carregados aqui via JavaScript -->
+                        </div>
+                        <small>Selecione 2 tanques para associar a este caminhão</small>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="fecharModal()">Cancelar</button>
                 <button class="btn btn-primary" onclick="salvarRegistro()">Salvar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para mostrar veículos em operação -->
-    <div class="modal-veiculos" id="modalVeiculos">
-        <div class="modal-veiculos-content">
-            <div class="modal-veiculos-header">
-                <h2 id="modalVeiculosTitulo">Veículos</h2>
-                <span style="cursor: pointer;" onclick="fecharModalVeiculos()">×</span>
-            </div>
-            <div class="modal-veiculos-body">
-                <div class="lista-veiculos" id="lista-veiculos">
-                    <!-- Lista de veículos será carregada aqui -->
-                </div>
-            </div>
-            <div class="modal-veiculos-footer">
-                <button class="btn" onclick="fecharModalVeiculos()">Fechar</button>
-            </div>
             </div>
         </div>
     </div>
@@ -810,6 +755,18 @@
             'FALTA COMBUSTIVEL': '#c0392b' // Vermelho escuro
         };
 
+        // Lista de tanques disponíveis
+        const tanquesDisponiveis = [
+            { id: '606001', nome: '606001 - TANQUE TP' },
+            { id: '606002', nome: '606002 - TANQUE TP' },
+            { id: '606003', nome: '606003 - TANQUE TP' },
+            { id: '606004', nome: '606004 - TANQUE TP' },
+            { id: '606005', nome: '606005 - TANQUE TP' },
+            { id: '606006', nome: '606006 - TANQUE TP' },
+            { id: '606007', nome: '606007 - TANQUE TP' },
+            { id: '606008', nome: '606008 - TANQUE TP' }
+        ];
+
         // Variáveis para os gráficos
         let operacaoChart = null;
         let impactoChart = null;
@@ -861,6 +818,9 @@
             document.getElementById('modalData').value = hoje;
             document.getElementById('dataInicio').value = hoje;
             document.getElementById('dataFim').value = hoje;
+            
+            // Adicionar listener para mudança de frota no modal
+            document.getElementById('modalFrota').addEventListener('change', atualizarTanques);
         });
 
         // Função para carregar registros na tabela
@@ -882,21 +842,6 @@
             if (filtros.operacao) {
                 registrosFiltrados = registrosFiltrados.filter(r => r.operacao === filtros.operacao);
             }
-            
-            // Ordenar registros por data e hora (mais recentes primeiro)
-            registrosFiltrados.sort((a, b) => {
-                // Primeiro por data (mais recente primeiro)
-                if (a.data !== b.data) {
-                    return new Date(b.data) - new Date(a.data);
-                }
-                // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
-                const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
-                const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
-                const minutosBFim = horaBFim * 60 + minutoBFim;
-                const minutosAFim = horaAFim * 60 + minutoAFim;
-                
-                return minutosBFim - minutosAFim;
-            });
             
             // Atualizar contador
             document.getElementById('total-registros').textContent = `${registrosFiltrados.length} registros encontrados`;
@@ -971,49 +916,14 @@
             }
             
             // Calcular totais
-            const frotasUnicas = [...new Set(registrosFiltrados.map(r => r.frota))];
-            const totalVeiculos = frotasUnicas.length;
+            const totalVeiculos = new Set(registrosFiltrados.map(r => r.frota)).size;
+            const emOperacao = registrosFiltrados.filter(r => r.operacao === 'PRO').length;
+            const emManutencao = registrosFiltrados.filter(r => r.operacao !== 'PRO').length;
             
             // Calcular horas produtivas (apenas registros PRO)
             const horasProdutivas = registrosFiltrados
                 .filter(r => r.operacao === 'PRO')
                 .reduce((total, r) => total + r.horaTotal, 0) / 60; // Converter minutos para horas
-            
-            // Calcular veículos em operação e em manutenção
-            let emOperacao = 0;
-            let emManutencao = 0;
-            
-            // Para cada frota única, encontrar o último registro (mais recente)
-            frotasUnicas.forEach(frota => {
-                // Filtrar registros apenas desta frota
-                const registrosFrota = registrosFiltrados.filter(r => r.frota === frota);
-                
-                // Ordenar por data e hora (mais recente primeiro)
-                registrosFrota.sort((a, b) => {
-                    // Primeiro por data
-                    if (a.data !== b.data) {
-                        return new Date(b.data) - new Date(a.data);
-                    }
-                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
-                    // Converter hora para minutos para comparação precisa
-                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
-                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
-                    const minutosBFim = horaBFim * 60 + minutoBFim;
-                    const minutosAFim = horaAFim * 60 + minutoAFim;
-                    
-                    return minutosBFim - minutosAFim;
-                });
-                
-                // Pegar o registro mais recente
-                const ultimoRegistro = registrosFrota[0];
-                
-                // Verificar se está em operação (PRO) ou manutenção (qualquer outra coisa)
-                if (ultimoRegistro.operacao === 'PRO') {
-                    emOperacao++;
-                } else {
-                    emManutencao++;
-                }
-            });
             
             // Atualizar elementos
             document.getElementById('total-veiculos').textContent = totalVeiculos;
@@ -1113,10 +1023,8 @@
             // Calcular horas perdidas por chuva
             const horasChuva = totaisPorOperacao['CHUVA'] || 0;
             
-            // Calcular outras horas improdutivas (excluindo PRO, RESERVA, AGUAR. CONSERT e CHUVA)
-            const outrasOperacoes = Object.keys(totaisPorOperacao).filter(op => 
-                op !== 'PRO' && op !== 'RESERVA' && op !== 'AGUAR. CONSERT' && op !== 'CHUVA'
-            );
+            // Calcular outras horas improdutivas (excluindo PRO, RESERVA e AGUAR. CONSERT)
+            const outrasOperacoes = Object.keys(totaisPorOperacao).filter(op => op !== 'PRO' && op !== 'RESERVA' && op !== 'AGUAR. CONSERT');
             const outrasHorasImprodutivas = outrasOperacoes.reduce((acc, op) => acc + (totaisPorOperacao[op] || 0), 0);
             
             // Preparar dados para o gráfico de operações (barras com porcentagens)
@@ -1136,7 +1044,7 @@
                 }]
             };
             
-            // Preparar dados para o gráfico de impacto (pizza com porcentagens)
+            // Preparar dados para o gráfico de impacto (pizza com horas)
             const impactoData = {
                 labels: ['Produtiva', 'Reserva', 'Horas Perdidas por Chuva', 'Outras Paradas'],
                 datasets: [{
@@ -1214,9 +1122,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.raw / total) * 100).toFixed(1);
-                                    return `${context.label}: ${context.raw.toFixed(1)} horas (${percentage}%)`;
+                                    return `${context.label}: ${context.raw.toFixed(1)} horas`;
                                 }
                             }
                         }
@@ -1242,6 +1148,9 @@
                 
                 // Preencher data atual
                 document.getElementById('modalData').value = new Date().toISOString().split('T')[0];
+                
+                // Atualizar tanques baseado na frota selecionada
+                atualizarTanques();
             }
             
             modal.style.display = 'flex';
@@ -1267,6 +1176,9 @@
                 document.getElementById('modalHoraInicio').value = registro.horaInicio;
                 document.getElementById('modalHoraFim').value = registro.horaFim;
                 document.getElementById('modalHoraTotal').value = registro.horaTotal;
+                
+                // Atualizar tanques baseado na frota selecionada
+                atualizarTanques();
             }
         }
         
@@ -1275,12 +1187,51 @@
             const frota = document.getElementById('modalFrota').value;
             const classe = mapeamentoFrotas[frota] || '';
             document.getElementById('modalClasse').value = classe;
+            
+            // Atualizar tanques baseado na frota selecionada
+            atualizarTanques();
         }
         
         // Função para atualizar tipo de operação baseado na operação selecionada
         function atualizarTipoOperacao() {
             const operacao = document.getElementById('modalOperacao').value;
             document.getElementById('modalTipoOper').value = mapeamentoOperacoes[operacao] || '';
+        }
+        
+        // Função para atualizar a lista de tanques baseado na frota selecionada
+        function atualizarTanques() {
+            const frota = document.getElementById('modalFrota').value;
+            const classe = mapeamentoFrotas[frota] || '';
+            const tanquesContainer = document.getElementById('tanquesContainer');
+            const tanquesLista = document.getElementById('tanquesLista');
+            
+            // Mostrar apenas para caminhões
+            if (classe === 'CAMINHÃO') {
+                tanquesContainer.style.display = 'block';
+                
+                // Limpar lista atual
+                tanquesLista.innerHTML = '';
+                
+                // Adicionar tanques à lista
+                tanquesDisponiveis.forEach(tanque => {
+                    const div = document.createElement('div');
+                    div.className = 'tanque-item';
+                    div.innerHTML = `
+                        <input type="checkbox" id="tanque_${tanque.id}" name="tanques" value="${tanque.id}">
+                        <label for="tanque_${tanque.id}">${tanque.nome}</label>
+                    `;
+                    tanquesLista.appendChild(div);
+                });
+            } else {
+                tanquesContainer.style.display = 'none';
+            }
+        }
+        
+        // Função para obter tanques selecionados
+        function obterTanquesSelecionados() {
+            const checkboxes = document.querySelectorAll('input[name="tanques"]:checked');
+            const tanquesSelecionados = Array.from(checkboxes).map(cb => cb.value);
+            return tanquesSelecionados;
         }
         
         // Função para calcular hora total
@@ -1314,6 +1265,15 @@
             const horaFim = document.getElementById('modalHoraFim').value;
             const horaTotal = document.getElementById('modalHoraTotal').value;
             
+            // Verificar se é um caminhão e se precisa de tanques
+            const tanquesSelecionados = obterTanquesSelecionados();
+            const precisaTanques = classe === 'CAMINHÃO';
+            
+            if (precisaTanques && tanquesSelecionados.length !== 2) {
+                alert('Para caminhões, é necessário selecionar exatamente 2 tanques.');
+                return;
+            }
+            
             if (id) {
                 // Editar registro existente
                 const index = registros.findIndex(r => r.id === parseInt(id));
@@ -1334,7 +1294,7 @@
             } else {
                 // Adicionar novo registro
                 const novoId = registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1;
-                registros.push({
+                const novoRegistro = {
                     id: novoId,
                     data,
                     frota,
@@ -1345,7 +1305,28 @@
                     horaFim,
                     horaTotal: parseInt(horaTotal),
                     os
-                });
+                };
+                
+                registros.push(novoRegistro);
+                
+                // Se for um caminhão com tanques selecionados, criar registros para os tanques
+                if (precisaTanques) {
+                    tanquesSelecionados.forEach(tanqueId => {
+                        const tanqueRegistro = {
+                            id: registros.length > 0 ? Math.max(...registros.map(r => r.id)) + 1 : 1,
+                            data,
+                            frota: tanqueId,
+                            classe: 'TANQUE TP',
+                            operacao: operacao === 'PRO' ? 'PRO' : 'AGUAR. CONSERT',
+                            tipoOper: operacao === 'PRO' ? 'PRO' : 'AGUAR. CONSERT',
+                            horaInicio,
+                            horaFim,
+                            horaTotal: parseInt(horaTotal),
+                            os
+                        };
+                        registros.push(tanqueRegistro);
+                    });
+                }
                 
                 // Verificar se é uma operação PRO que termina às 23:59
                 if (operacao === 'PRO' && horaFim === '23:59') {
@@ -1385,6 +1366,9 @@
                         document.getElementById('modalOs').value = '';
                         calcularHoraTotal();
                         
+                        // Atualizar tanques
+                        atualizarTanques();
+                        
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Próximo Dia)';
                         document.getElementById('modalRegistro').style.display = 'flex';
@@ -1413,6 +1397,9 @@
                         document.getElementById('modalOs').value = '';
                         document.getElementById('modalHoraTotal').value = '';
                         
+                        // Atualizar tanques
+                        atualizarTanques();
+                        
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Parada)';
                         document.getElementById('modalRegistro').style.display = 'flex';
@@ -1440,6 +1427,9 @@
                         document.getElementById('modalTipoOper').value = 'PRO';
                         document.getElementById('modalOs').value = '';
                         calcularHoraTotal();
+                        
+                        // Atualizar tanques
+                        atualizarTanques();
                         
                         // Manter o modal aberto para o próximo registro
                         document.getElementById('modalTitulo').textContent = 'Novo Registro (Produção)';
@@ -1569,113 +1559,6 @@
         function formatarData(dataStr) {
             const data = new Date(dataStr);
             return data.toLocaleDateString('pt-BR');
-        }
-
-        // Função para mostrar veículos em operação
-        function mostrarVeiculosOperacao() {
-            const modal = document.getElementById('modalVeiculos');
-            const titulo = document.getElementById('modalVeiculosTitulo');
-            const lista = document.getElementById('lista-veiculos');
-            
-            titulo.textContent = 'Veículos em Operação';
-            lista.innerHTML = '';
-            
-            // Obter frotas únicas
-            const frotasUnicas = [...new Set(registros.map(r => r.frota))];
-            
-            frotasUnicas.forEach(frota => {
-                // Filtrar registros apenas desta frota
-                const registrosFrota = registros.filter(r => r.frota === frota);
-                
-                // Ordenar por data e hora (mais recente primeiro)
-                registrosFrota.sort((a, b) => {
-                    if (a.data !== b.data) {
-                        return new Date(b.data) - new Date(a.data);
-                    }
-                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
-                    // Converter hora para minutos para comparação precisa
-                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
-                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
-                    const minutosBFim = horaBFim * 60 + minutoBFim;
-                    const minutosAFim = horaAFim * 60 + minutoAFim;
-                    
-                    return minutosBFim - minutosAFim;
-                });
-                
-                // Pegar o registro mais recente
-                const ultimoRegistro = registrosFrota[0];
-                
-                // Verificar se está em operação (PRO)
-                if (ultimoRegistro.operacao === 'PRO') {
-                    const div = document.createElement('div');
-                    div.className = 'veiculo-item';
-                    div.innerHTML = `
-                        <strong>${frota}</strong>
-                        <div>${ultimoRegistro.classe}</div>
-                        <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
-                        <div class="veiculo-operacao">Último registro: ${formatarData(ultimoRegistro.data)} ${ultimoRegistro.horaFim}</div>
-                    `;
-                    lista.appendChild(div);
-                }
-            });
-            
-            modal.style.display = 'flex';
-        }
-        
-        // Função para mostrar veículos parados
-        function mostrarVeiculosParados() {
-            const modal = document.getElementById('modalVeiculos');
-            const titulo = document.getElementById('modalVeiculosTitulo');
-            const lista = document.getElementById('lista-veiculos');
-            
-            titulo.textContent = 'Veículos Parados';
-            lista.innerHTML = '';
-            
-            // Obter frotas únicas
-            const frotasUnicas = [...new Set(registros.map(r => r.frota))];
-            
-            frotasUnicas.forEach(frota => {
-                // Filtrar registros apenas desta frota
-                const registrosFrota = registros.filter(r => r.frota === frota);
-                
-                // Ordenar por data e hora (mais recente primeiro)
-                registrosFrota.sort((a, b) => {
-                    if (a.data !== b.data) {
-                        return new Date(b.data) - new Date(a.data);
-                    }
-                    // Se for a mesma data, ordenar por hora de fim (mais recente primeiro)
-                    // Converter hora para minutos para comparação precisa
-                    const [horaBFim, minutoBFim] = b.horaFim.split(':').map(Number);
-                    const [horaAFim, minutoAFim] = a.horaFim.split(':').map(Number);
-                    const minutosBFim = horaBFim * 60 + minutoBFim;
-                    const minutosAFim = horaAFim * 60 + minutoAFim;
-                    
-                    return minutosBFim - minutosAFim;
-                });
-                
-                // Pegar o registro mais recente
-                const ultimoRegistro = registrosFrota[0];
-                
-                // Verificar se está parado (não é PRO)
-                if (ultimoRegistro.operacao !== 'PRO') {
-                    const div = document.createElement('div');
-                    div.className = 'veiculo-item parado';
-                    div.innerHTML = `
-                        <strong>${frota}</strong>
-                        <div>${ultimoRegistro.classe}</div>
-                        <div class="veiculo-operacao">${ultimoRegistro.operacao}</div>
-                        <div class="veiculo-operacao">Último registro: ${formatarData(ultimoRegistro.data)} ${ultimoRegistro.horaFim}</div>
-                    `;
-                    lista.appendChild(div);
-                }
-            });
-            
-            modal.style.display = 'flex';
-        }
-        
-        // Função para fechar modal de veículos
-        function fecharModalVeiculos() {
-            document.getElementById('modalVeiculos').style.display = 'none';
         }
     </script>
 </body>
