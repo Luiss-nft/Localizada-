@@ -1602,9 +1602,11 @@
         }
     }
     
-    // Função auxiliar para formatar data
+    // Função auxiliar para formatar data CORRIGIDA
     function formatarData(dataStr) {
-        const data = new Date(dataStr);
+        // Dividir a data em partes para evitar problemas de fuso horário
+        const [ano, mes, dia] = dataStr.split('-');
+        const data = new Date(ano, mes - 1, dia); // mês é 0-indexed
         return data.toLocaleDateString('pt-BR');
     }
 </script>
