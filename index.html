@@ -1,221 +1,406 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de Gerenciamento</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0b1020;       /* fundo */
-      --card:#121832;     /* cartões */
-      --muted:#8a93b2;    /* textos secundários */
-      --primary:#6c8cff;  /* destaque */
-      --primary-2:#8a5bff;
-      --ring: rgba(108,140,255,.4);
-      --ok:#10b981;
-      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
-      background: radial-gradient(1200px 800px at 10% -10%, rgba(108,140,255,.15), transparent 40%),
-                  radial-gradient(1000px 700px at 110% 10%, rgba(138,91,255,.12), transparent 45%),
-                  var(--bg);
-      color:#e8ecff;
-    }
-    a{color:inherit;text-decoration:none}
-
-    .container{
-      min-height:100%;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-    }
-
-    header{
-      padding:28px clamp(16px, 6vw, 48px);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
-    .logo{
-      width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2));
-      display:grid; place-items:center; box-shadow:var(--shadow);
-    }
-    .logo svg{opacity:.9}
-
-    main{padding: clamp(24px, 6vw, 56px);}
-    .hero{
-      max-width:1000px; margin:0 auto 28px; text-align:center;
-    }
-    .hero h1{font-size: clamp(28px, 4vw, 42px); margin:0 0 10px; line-height:1.1}
-    .hero p{margin:0; color:var(--muted)}
-
-    .grid{
-      max-width:1100px; margin:36px auto 0; display:grid; gap:24px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    }
-
-    .card{
-      position:relative; overflow:hidden; border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
-      border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow);
-      padding:22px; transition:.25s ease transform, .25s ease box-shadow, .25s ease border-color;
-      backdrop-filter: blur(6px);
-      cursor:pointer;
-    }
-    .card:hover{ transform: translateY(-3px); box-shadow: 0 15px 45px rgba(0,0,0,.45); border-color: rgba(108,140,255,.35);}
-    .card:focus-visible{ outline:3px solid var(--ring)}
-
-    .card-top{ display:flex; align-items:center; gap:14px; margin-bottom:10px}
-    .card .icon{width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:rgba(108,140,255,.12);}
-    .card .icon svg{ width:24px; height:24px }
-    .card h2{font-size: clamp(18px, 2.5vw, 22px); margin:0}
-    .card p{margin:8px 0 0; color:var(--muted); font-size:14px}
-
-    .chip{
-      display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:8px 12px; border-radius:999px;
-      background:rgba(16,185,129,.12); color:#d2fff1; border:1px solid rgba(16,185,129,.35); font-weight:600; font-size:12px;
-    }
-
-    footer{ padding:26px clamp(16px, 6vw, 48px); color:var(--muted); text-align:center; font-size:13px }
-
-    /* pequenos toques de animação */
-    @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(108,140,255,.35)}70%{box-shadow:0 0 0 12px rgba(108,140,255,0)}100%{box-shadow:0 0 0 0 rgba(108,140,255,0)}}
-    .pulse{ animation: pulseGlow 2.2s ease-in-out infinite }
-
-    /* responsividade extra */
-    @media (max-width:420px){ .card{padding:18px} .card .icon{width:40px;height:40px} }
-  </style>
-  <script defer src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
-  
-
-    <main>
-      <section class="hero" aria-labelledby="titulo">
-        <h1 id="titulo">Escolha um módulo</h1>
-        <p>Selecione abaixo para abrir a <strong>Planilha de Gerenciamento</strong> ou a <strong>Gestão de Veículos</strong>.</p>
-      </section>
-
-      <section class="grid" aria-label="Módulos">
-        <!-- Card: Planilha de Gerenciamento -->
-        <a class="card" id="card-planilha" href="planilha.html">
-          <div class="card-top">
-            <div class="icon" aria-hidden="true">
-              <i data-lucide="table"></i>
-            </div>
-            <div>
-              <h2>Planilha de Gerenciamento</h2>
-             
-            </div>
-          </div>
-          <span class="chip">Pronto para usar</span>
-        </a>
-
-        <!-- Card: Gestão de Veículos -->
-        <a class="card" id="card-veiculos" href="gestao-veiculos.html">
-          <div class="card-top">
-            <div class="icon" aria-hidden="true" style="background: rgba(138,91,255,.12)">
-              <i data-lucide="car"></i>
-            </div>
-            <div>
-              <h2>Gestão de Veículos</h2>
-            
-            </div>
-          </div>
-          <span class="chip" style="background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.35);">Beta</span>
-        </a>
-      </section>
-
-      <!-- Seções placeholder -->
-      <section id="planilha" style="max-width:1000px;margin:38px auto 0; display:none">
-        <h2 style="margin:0 0 10px">Planilha de Gerenciamento</h2>
-        <p style="color:var(--muted)">Este é um espaço reservado. Você pode integrar sua planilha ou criar uma tela com tabelas e gráficos aqui.</p>
-        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
-          <button id="abrirPlanilha" style="padding:10px 14px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:white; border:none; box-shadow:var(--shadow); cursor:pointer">Abrir Planilha</button>
-          <button id="exportarCSV" style="padding:10px 14px; border-radius:12px; background:#1f2a4f; color:#d9e2ff; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); cursor:pointer">Exportar CSV</button>
-        </div>
-      </section>
-
-      <section id="veiculos" style="max-width:1000px;margin:38px auto 0; display:none">
-        <h2 style="margin:0 0 10px">Gestão de Veículos</h2>
-        <p style="color:var(--muted)">Cadastre e acompanhe sua frota. Em breve: checklist, manutenção preventiva e relatórios.</p>
-        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
-          <button id="novoVeiculo" style="padding:10px 14px; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:white; border:none; box-shadow:var(--shadow); cursor:pointer">Novo Veículo</button>
-          <button id="listarVeiculos" style="padding:10px 14px; border-radius:12px; background:#1f2a4f; color:#d9e2ff; border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); cursor:pointer">Listar Veículos</button>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      © <span id="year"></span> Sistema de Gerenciamento
-    </footer>
-  </div>
-
-  <script>
-    // Ativa ícones Lucide
-    window.addEventListener('DOMContentLoaded', () => {
-      if (window.lucide) lucide.createIcons();
-      document.getElementById('year').textContent = new Date().getFullYear();
-    });
-
-    // Navegação simples por hash (#planilha | #veiculos)
-    const sections = {
-      planilha: document.getElementById('planilha'),
-      veiculos: document.getElementById('veiculos')
-    };
-
-    function showSection(id){
-      for (const key in sections){ sections[key].style.display = 'none'; }
-      if (sections[id]) sections[id].style.display = 'block';
-      // foco acessível
-      if (sections[id]) sections[id].setAttribute('tabindex','-1'), sections[id].focus({preventScroll:false});
-    }
-
-    function syncFromHash(){
-      const id = (location.hash || '').replace('#','');
-      if (id === 'planilha' || id === 'veiculos') {
-        showSection(id);
-      } else {
-        // nada selecionado: fecha seções
-        for (const key in sections){ sections[key].style.display = 'none'; }
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Turnos</title>
+    <style>
+      :root {
+        --bg: #f6f7f8;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --danger: #b00020;
+        --border: #e5e7eb;
+        --zebra: #f9fafb;
+        --green: #059669;
+        --green-dark: #047857;
+        --purple: #7c3aed;
+        --purple-dark: #6d28d9;
       }
-    }
-    window.addEventListener('hashchange', syncFromHash);
-    syncFromHash();
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 24px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+        background: var(--bg); color: var(--text);
+      }
+      .container {
+        max-width: 1100px; margin: 0 auto; background: var(--card);
+        border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        padding: 20px 20px 8px;
+      }
+      header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; letter-spacing: .2px; }
+      header p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
 
-    // Botões de Planilha (exemplos)
-    const abrirPlanilha = document.getElementById('abrirPlanilha');
-    const exportarCSV = document.getElementById('exportarCSV');
-    if (abrirPlanilha) abrirPlanilha.addEventListener('click', ()=>{
-      alert('Aqui você pode integrar sua planilha real (CSV/JSON/Backend).');
-    });
-    if (exportarCSV) exportarCSV.addEventListener('click', ()=>{
-      const rows = [
-        ['Tarefa','Horas','Custo'],
-        ['Exemplo A','5','R$ 250,00'],
-        ['Exemplo B','2','R$ 100,00']
+      /* Grid do formulário */
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+        align-items: end;
+      }
+      .field { display: flex; flex-direction: column; gap: 6px; }
+      .field label { font-size: 13px; color: var(--muted); }
+      .field input {
+        padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fff; width: 100%;
+      }
+      .field-date { grid-column: span 4; min-width: 180px; }
+      .field-name { grid-column: span 6; min-width: 220px; }
+      .field-button { grid-column: span 2; display: flex; align-items: end; }
+      button.primary {
+        width: 100%; padding: 12px 14px; border: 0; border-radius: 8px; cursor: pointer;
+        background: var(--primary); color: #fff; font-weight: 600; font-size: 14px;
+      }
+      button.primary:hover { background: var(--primary-dark); }
+
+      /* Alavanca única Dia ↔ Noite */
+      .toggle-bar {
+        margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      }
+      .toggle-label { font-size: 13px; color: var(--muted); }
+      .single-toggle {
+        position: relative;
+        width: 240px; height: 44px; border-radius: 999px;
+        background: #f1f5f9; border: 1px solid var(--border);
+        display: grid; grid-template-columns: 1fr 1fr; overflow: hidden;
+        cursor: pointer; user-select: none;
+      }
+      .single-toggle .side {
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 14px;
+        z-index: 1; color: #475569;
+      }
+      .single-toggle .side.day { color: var(--green-dark); }
+      .single-toggle .side.night { color: var(--purple-dark); }
+      .single-toggle .thumb {
+        position: absolute; top: 2px; width: 118px; height: 40px; border-radius: 999px; 
+        background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12);
+        transition: left .22s ease, background .2s ease, border-color .2s ease;
+        border: 2px solid transparent;
+      }
+      /* Estado visual por lado */
+      .single-toggle.state-day .thumb { left: 2px; border-color: #10b98122; }
+      .single-toggle.state-night .thumb { left: 120px; border-color: #8b5cf622; }
+      .single-toggle.state-day { background: #ecfdf5; border-color: #a7f3d0; }
+      .single-toggle.state-night { background: #f5f3ff; border-color: #ddd6fe; }
+
+      /* Mensagens */
+      .msg { margin-top: 10px; font-size: 14px; color: var(--muted); }
+      .msg.error { color: var(--danger); }
+      .msg.success { color: #065f46; }
+
+      /* Tabela */
+      .table-wrap {
+        margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+        background: #fff;
+      }
+      .table-scroll { max-height: 60vh; overflow: auto; }
+      table { border-collapse: separate; border-spacing: 0; width: 100%; table-layout: fixed; }
+      thead th {
+        position: sticky; top: 0; z-index: 1;
+        background: #0f172a; color: #fff; text-align: left; font-weight: 600; font-size: 13px;
+        padding: 12px;
+      }
+      tbody td {
+        padding: 12px; border-top: 1px solid var(--border);
+        vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+        font-size: 14px; color: #111827;
+      }
+      tbody tr:nth-child(even) td { background: var(--zebra); }
+
+      .col-nome { width: 40%; }
+      .col-turma { width: 15%; }
+      .col-mat { width: 20%; }
+      .col-horario { width: 25%; }
+
+      footer { padding: 10px 2px 14px; color: var(--muted); font-size: 12px; text-align: right; }
+
+      @media (max-width: 900px) {
+        .field-date { grid-column: span 6; }
+        .field-name { grid-column: span 6; }
+        .field-button { grid-column: span 12; }
+        .col-nome { width: 42%; }
+        .col-turma { width: 18%; }
+        .col-mat { width: 20%; }
+        .col-horario { width: 20%; }
+      }
+      @media (max-width: 600px) {
+        .controls { grid-template-columns: repeat(6, 1fr); }
+        .field-date { grid-column: span 6; }
+        .field-name { grid-column: span 6; }
+        .field-button { grid-column: span 6; }
+        thead th, tbody td { font-size: 13px; padding: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Consulta de Turnos</h1>
+        <p>Digite parte do nome e selecione a data. Use a alavanca única para alternar Dia ↔ Noite.</p>
+      </header>
+
+      <section class="controls">
+        <div class="field field-date">
+          <label for="data">Dia</label>
+          <input type="date" id="data" value="2025-11-01">
+        </div>
+        <div class="field field-name">
+          <label for="nome">Nome do trabalhador</label>
+          <input type="text" id="nome" placeholder="Ex.: 'rafa', 'jo car', 'wllis', 'guti ben'">
+        </div>
+        <div class="field field-button">
+          <button class="primary" type="button" onclick="consultarTurno()">Consultar</button>
+        </div>
+      </section>
+
+      <div class="toggle-bar">
+        <span class="toggle-label">Horário:</span>
+        <div id="singleToggle" class="single-toggle state-day" role="button" tabindex="0" aria-label="Alternar horário Dia ou Noite" aria-live="polite">
+          <div class="side day">Dia</div>
+          <div class="side night">Noite</div>
+          <div class="thumb"></div>
+        </div>
+      </div>
+
+      <div id="mensagem" class="msg"></div>
+
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table id="resultado">
+            <thead>
+              <tr>
+                <th class="col-nome">Nome</th>
+                <th class="col-turma">Turma</th>
+                <th class="col-mat">Matrícula</th>
+                <th class="col-horario">Horário</th>
+              </tr>
+            </thead>
+            <tbody id="resultado-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <footer>
+        gpt-5 — alavanca única Dia ↔ Noite
+      </footer>
+    </div>
+
+    <script>
+      // Estado da alavanca: "Dia" ou "Noite" (sempre um escolhido)
+      let filtroHorario = "Dia";
+
+      // Utilidades de texto
+      function normalizarTexto(s) {
+        return (s || "")
+          .trim()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+      }
+      function tokenizar(s) {
+        return normalizarTexto(s).split(/\s+/).filter(Boolean);
+      }
+      function nomeCombina(parcial, nomeCompleto) {
+        const partes = tokenizar(parcial);
+        const nomeNorm = normalizarTexto(nomeCompleto);
+        return partes.every(p => nomeNorm.includes(p));
+      }
+      function mapTurno(letra) {
+        if (letra === "D") return "Dia";
+        if (letra === "N") return "Noite";
+        if (letra === "F") return "Folga";
+        return letra || "";
+      }
+      function gerarRegistros(nome, local, mat, turma, dias) {
+        const registros = [];
+        for (let i = 0; i < dias.length; i++) {
+          const dia = i + 1;
+          const data = `2025-11-${String(dia).padStart(2, "0")}`;
+          registros.push({
+            nome,
+            data,
+            turno: mapTurno(dias[i]),
+            turma: String(turma),
+            mat: String(mat),
+            local
+          });
+        }
+        return registros;
+      }
+
+      // Dados gerados a partir do PDF (novembro/2025, dias 1-15)
+      const trabalhadores = [
+        // Grupo 1
+        ...gerarRegistros("RAFAEL WALLACE", "A-101", "108817", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
+        ...gerarRegistros("JOSE CARLOS", "B-102", "108813", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
+        ...gerarRegistros("MATEUS HENRIQUE", "C-103", "108815", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
+        ...gerarRegistros("TIAGO GALDINO", "D-104", "108818", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
+        ...gerarRegistros("MADSON DE SANTANA", "E-105", "108814", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
+        ...gerarRegistros("JOSEILDO VICENTE", "F-106", "109092", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+
+        // Grupo 2
+        ...gerarRegistros("JOSE GERVASIO", "A-101", "108445", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
+        ...gerarRegistros("DANIEL ALVES", "B-102", "108432", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
+        ...gerarRegistros("JOAO VITOR", "C-103", "108812", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
+        ...gerarRegistros("ENIO PEREIRA", "D-104", "108614", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
+        ...gerarRegistros("TIAGO HENRIQUE", "E-105", "108674", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
+        ...gerarRegistros("JEAN MARCOS", "F-106", "108725", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+
+        // Grupo 3
+        ...gerarRegistros("EDSON FERNANDO", "A-101", "105510", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
+        ...gerarRegistros("PEDRO HENRIQUE", "B-102", "108801", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
+        ...gerarRegistros("WANDERSON JOSE", "C-103", "105599", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
+        ...gerarRegistros("BRENO RAY", "D-104", "108601", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
+        ...gerarRegistros("GEREMIAS ROSA", "E-105", "108627", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
+        ...gerarRegistros("JUNIOR RICARDO", "F-106", "108748", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+
+        // Grupo 4
+        ...gerarRegistros("LUIZ HENRIQUE", "A-101", "108755", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
+        ...gerarRegistros("EDUARDO PEREIRA", "B-102", "107955", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
+        ...gerarRegistros("BRENO HENRIQUE", "C-103", "108713", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
+        ...gerarRegistros("GABRIEL RIBEIRO", "D-104", "108625", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
+        ...gerarRegistros("IVAN JOSE", "E-105", "108636", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
+        ...gerarRegistros("JOSE CARLOS", "F-106", "109083", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+
+        // Grupo 5
+        ...gerarRegistros("LEANDRO JOSE", "A-101", "109087", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
+        ...gerarRegistros("MARCIO ABDIAS", "B-102", "109090", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
+        ...gerarRegistros("MARCONE JOSE", "C-103", "109027", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
+        ...gerarRegistros("GABRIEL DIAS", "D-104", "108720", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
+        ...gerarRegistros("JAILSON BATISTA", "E-105", "109093", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
+        ...gerarRegistros("WLLISSES ISAAC", "F-106", "108766", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+
+        // Grupo 6
+        ...gerarRegistros("GUTEMBERG BENARDO", "A-101", "108810", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
+        ...gerarRegistros("PEDRO CARLOS", "B-102", "108816", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
+        ...gerarRegistros("ARLAN ANTONIO", "C-103", "108809", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
+        ...gerarRegistros("IGOR SILVA", "D-104", "108811", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
+        ...gerarRegistros("GILIADRO FERREIRA", "E-105", "108807", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
+        ...gerarRegistros("MANOEL ROBERTO", "F-106", "109099", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+
+        // Grupo 7
+        ...gerarRegistros("GUTEMBERGUE DA SILVA", "A-101", "108432", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
+        ...gerarRegistros("RUAN FERNANDO", "B-102", "108430", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
+        ...gerarRegistros("VICTOR IZAU", "C-103", "108808", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
+        ...gerarRegistros("GERSON FELIPE", "D-104", "107118", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
+        ...gerarRegistros("FELIPE MAURICIO", "E-105", "108806", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
+        ...gerarRegistros("MATEUS RIBEIRO", "F-106", "108771", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+
+        // Grupo 8
+        ...gerarRegistros("ALEF SEVERINO", "A-101", "106411", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
+        ...gerarRegistros("RODRIGO ADOLFO", "B-102", "108762", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
+        ...gerarRegistros("DACIEL MARTINS", "C-103", "86373", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
+        ...gerarRegistros("DJAIR GOMES", "D-104", "61276", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
+        ...gerarRegistros("JOSE RICARDO", "E-105", "105550", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
+        ...gerarRegistros("DIOGO JOSE", "F-106", "108605", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+
+        // Grupo 9
+        ...gerarRegistros("ADRIANO DA SILVA", "B-102", "108573", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
+        ...gerarRegistros("REGINALDO TRAJANO", "C-103", "108760", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
+        ...gerarRegistros("ANDRE PEREIRA", "D-104", "108854", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
+        ...gerarRegistros("JOSE SEBASTIÃO", "E-105", "108746", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
+        ...gerarRegistros("JADSON NUNES", "F-106", "109084", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+
+        // Grupo 10
+        ...gerarRegistros("REGINALDO JOAQUIM", "A-101", "109089", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
+        ...gerarRegistros("EVANDRO RAIMUDO", "B-102", "109088", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
+        ...gerarRegistros("JOSE CARLOS", "D-104", "108420", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
+        ...gerarRegistros("OZIEL ROSA", "E-105", "109026", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
+        ...gerarRegistros("LUCAS GABRIEL", "F-106", "108750", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"])
       ];
-      const csv = rows.map(r=>r.join(',')).join('\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'planilha-exemplo.csv'; a.click();
-      URL.revokeObjectURL(url);
-    });
 
-    // Botões de Veículos (exemplos)
-    const novoVeiculo = document.getElementById('novoVeiculo');
-    const listarVeiculos = document.getElementById('listarVeiculos');
-    if (novoVeiculo) novoVeiculo.addEventListener('click', ()=>{
-      prompt('Cadastrar veículo:\nDigite placa/modelo (ex.: ABC1D23 - Strada)');
-    });
-    if (listarVeiculos) listarVeiculos.addEventListener('click', ()=>{
-      alert('Em breve: listagem de frota com filtros, manutenção e disponibilidade.');
-    });
-  </script>
-</body>
-</html>
+      const corpo = document.getElementById('resultado-body');
+      const mensagem = document.getElementById('mensagem');
+      const singleToggle = document.getElementById('singleToggle');
+
+      function limparTabela() { corpo.innerHTML = ""; }
+      function mostrarMensagem(texto, tipo = "") {
+        mensagem.className = "msg " + (tipo || "");
+        mensagem.textContent = texto || "";
+      }
+
+      function aplicarFiltroHorario(registros) {
+        return registros.filter(r => r.turno === filtroHorario);
+      }
+
+      function consultarTurno() {
+        const data = document.getElementById('data').value;
+        const nome = document.getElementById('nome').value;
+
+        limparTabela();
+        mostrarMensagem("");
+
+        if (!data || !nome) {
+          mostrarMensagem("Preencha a data e o nome antes de consultar.", "error");
+          return;
+        }
+
+        let resultados = trabalhadores.filter(t =>
+          t.data === data && nomeCombina(nome, t.nome)
+        );
+
+        resultados = aplicarFiltroHorario(resultados);
+
+        if (resultados.length > 0) {
+          const frag = document.createDocumentFragment();
+          resultados.forEach(t => {
+            const tr = document.createElement('tr');
+
+            const tdNome = document.createElement('td'); tdNome.textContent = t.nome;
+            const tdTurma = document.createElement('td'); tdTurma.textContent = t.turma;
+            const tdMat = document.createElement('td'); tdMat.textContent = t.mat;
+            const tdHorario = document.createElement('td'); tdHorario.textContent = t.turno;
+
+            tr.appendChild(tdNome);
+            tr.appendChild(tdTurma);
+            tr.appendChild(tdMat);
+            tr.appendChild(tdHorario);
+
+            frag.appendChild(tr);
+          });
+          corpo.appendChild(frag);
+          mostrarMensagem(`${resultados.length} registro(s) encontrado(s).`, "success");
+        } else {
+          mostrarMensagem("Nenhum registro encontrado com os filtros informados.", "error");
+        }
+      }
+
+      // Alternância da alavanca (clique e teclado)
+      function alternarHorario() {
+        filtroHorario = (filtroHorario === "Dia") ? "Noite" : "Dia";
+        if (filtroHorario === "Dia") {
+          singleToggle.classList.remove("state-night");
+          singleToggle.classList.add("state-day");
+          singleToggle.setAttribute("aria-label", "Horário atual: Dia. Clique para alternar para Noite.");
+        } else {
+          singleToggle.classList.remove("state-day");
+          singleToggle.classList.add("state-night");
+          singleToggle.setAttribute("aria-label", "Horário atual: Noite. Clique para alternar para Dia.");
+        }
+        // Atualiza a lista se já houver resultados
+        if (corpo.children.length > 0) {
+          consultarTurno();
+        }
+      }
+
+      singleToggle.addEventListener('click', alternarHorario);
+      singleToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternarHorario(); }
+      });
+
+      // Atalhos Enter nos inputs
+      document.getElementById('nome').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') consultarTurno();
+      });
+      document.getElementById('data').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') consultarTurno();
+      });
+
+      // Expor função ao botão
+      window.consultarTurno = consultarTurno;
+    </script>
+  </body>
+  </html>
