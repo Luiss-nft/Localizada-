@@ -1,237 +1,239 @@
   <!DOCTYPE html>
   <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Sistema de Turnos</title>
     <style>
-      :root {
-        --bg: #f6f7f8;
-        --card: #ffffff;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-        --danger: #b00020;
-        --border: #e5e7eb;
-        --zebra: #f9fafb;
-        --green: #059669;
-        --green-dark: #047857;
-        --purple: #7c3aed;
-        --purple-dark: #6d28d9;
-      }
+      :root { --bg:#f6f7f8; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#2563eb; --primary-dark:#1d4ed8; --danger:#b00020; --border:#e5e7eb; --zebra:#f9fafb; --green:#059669; --green-dark:#047857; --purple:#7c3aed; --purple-dark:#6d28d9; }
       * { box-sizing: border-box; }
-      body {
-        margin: 0; padding: 24px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
-        background: var(--bg); color: var(--text);
-      }
-      .container {
-        max-width: 1100px; margin: 0 auto; background: var(--card);
-        border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-        padding: 20px 20px 8px;
-      }
-      header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; letter-spacing: .2px; }
-      header p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+      html, body { height: 100%; }
+      body { margin: 0; padding: 16px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+      .container { max-width: 980px; margin: 0 auto; background: var(--card); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.06); padding: 16px 14px 8px; }
+      header h1 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+      header p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
 
-      /* Grid do formulário */
-      .controls {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 12px;
-        margin-top: 12px;
-        align-items: end;
-      }
+      .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+      .tab-btn { padding: 10px 12px; border: 1px solid transparent; border-radius: 10px 10px 0 0; cursor: pointer; background: transparent; color: var(--text); font-weight: 600; font-size: 13px; white-space: nowrap; flex: 0 0 auto; }
+      .tab-btn[aria-selected="true"] { background: #fff; border-color: var(--border); border-bottom-color: #fff; }
+      .tab-panel { display: none; padding-top: 12px; }
+      .tab-panel.active { display: block; }
+
+      .controls { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; align-items: end; margin-top: 10px; }
       .field { display: flex; flex-direction: column; gap: 6px; }
-      .field label { font-size: 13px; color: var(--muted); }
-      .field input {
-        padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fff; width: 100%;
-      }
-      .field-date { grid-column: span 4; min-width: 180px; }
-      .field-name { grid-column: span 6; min-width: 220px; }
-      .field-button { grid-column: span 2; display: flex; align-items: end; }
-      button.primary {
-        width: 100%; padding: 12px 14px; border: 0; border-radius: 8px; cursor: pointer;
-        background: var(--primary); color: #fff; font-weight: 600; font-size: 14px;
-      }
+      .field label { font-size: 12px; color: var(--muted); }
+      .field input, .field select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; width: 100%; }
+      button.primary, button.secondary { padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; }
+      button.primary { border: 0; background: var(--primary); color: #fff; }
       button.primary:hover { background: var(--primary-dark); }
+      button.secondary { border: 1px solid var(--border); background: #f8fafc; color: var(--text); }
+      button.secondary:hover { background: #eef2f7; }
 
-      /* Alavanca única Dia ↔ Noite */
-      .toggle-bar {
-        margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-      }
-      .toggle-label { font-size: 13px; color: var(--muted); }
-      .single-toggle {
-        position: relative;
-        width: 240px; height: 44px; border-radius: 999px;
-        background: #f1f5f9; border: 1px solid var(--border);
-        display: grid; grid-template-columns: 1fr 1fr; overflow: hidden;
-        cursor: pointer; user-select: none;
-      }
-      .single-toggle .side {
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 14px;
-        z-index: 1; color: #475569;
-      }
+      .toggle-bar { margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .toggle-label { font-size: 12px; color: var(--muted); }
+      .single-toggle { position: relative; width: 220px; height: 42px; border-radius: 999px; background: #f1f5f9; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; cursor: pointer; user-select: none; }
+      .single-toggle .side { display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; z-index: 1; color: #475569; }
       .single-toggle .side.day { color: var(--green-dark); }
       .single-toggle .side.night { color: var(--purple-dark); }
-      .single-toggle .thumb {
-        position: absolute; top: 2px; width: 118px; height: 40px; border-radius: 999px; 
-        background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12);
-        transition: left .22s ease, background .2s ease, border-color .2s ease;
-        border: 2px solid transparent;
-      }
-      /* Estado visual por lado */
+      .single-toggle .thumb { position: absolute; top: 2px; width: 108px; height: 38px; border-radius: 999px; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12); transition: left .22s ease; border: 2px solid transparent; }
       .single-toggle.state-day .thumb { left: 2px; border-color: #10b98122; }
-      .single-toggle.state-night .thumb { left: 120px; border-color: #8b5cf622; }
+      .single-toggle.state-night .thumb { left: 110px; border-color: #8b5cf622; }
       .single-toggle.state-day { background: #ecfdf5; border-color: #a7f3d0; }
       .single-toggle.state-night { background: #f5f3ff; border-color: #ddd6fe; }
 
-      /* Mensagens */
-      .msg { margin-top: 10px; font-size: 14px; color: var(--muted); }
+      .msg { margin-top: 8px; font-size: 13px; color: var(--muted); }
       .msg.error { color: var(--danger); }
       .msg.success { color: #065f46; }
 
-      /* Tabela */
-      .table-wrap {
-        margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-        background: #fff;
-      }
-      .table-scroll { max-height: 60vh; overflow: auto; }
+      .table-wrap { margin-top: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+      .table-scroll { overflow: auto; max-height: 62vh; -webkit-overflow-scrolling: touch; }
       table { border-collapse: separate; border-spacing: 0; width: 100%; table-layout: fixed; }
-      thead th {
-        position: sticky; top: 0; z-index: 1;
-        background: #0f172a; color: #fff; text-align: left; font-weight: 600; font-size: 13px;
-        padding: 12px;
-      }
-      tbody td {
-        padding: 12px; border-top: 1px solid var(--border);
-        vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
-        font-size: 14px; color: #111827;
-      }
+      thead th { position: sticky; top: 0; z-index: 1; background: #0f172a; color: #fff; text-align: left; font-weight: 600; font-size: 12px; padding: 10px; }
+      tbody td { padding: 10px; border-top: 1px solid var(--border); vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere; font-size: 13px; color: #111827; }
       tbody tr:nth-child(even) td { background: var(--zebra); }
+      .col-nome { width: 42%; } .col-turma { width: 18%; } .col-mat { width: 20%; } .col-horario { width: 20%; }
+      .grupo-header { background: #f1f5f9; color: #0f172a; font-weight: 700; border-top: 1px solid var(--border); }
+      .grupo-header td { padding: 8px 10px; font-size: 12px; }
 
-      .col-nome { width: 40%; }
-      .col-turma { width: 15%; }
-      .col-mat { width: 20%; }
-      .col-horario { width: 25%; }
+      /* Turmas */
+      .turmas-controls { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; align-items: end; margin-top: 10px; }
+      .turma-select { grid-column: span 6; }
+      .data-select { grid-column: span 6; }
+      .turno-buttons { grid-column: span 12; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+      .turno-btn { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-weight: 700; font-size: 13px; }
+      .turno-btn.active { background: #ecfdf5; border-color: #a7f3d0; color: var(--green-dark); }
+      .turno-btn.night.active { background: #f5f3ff; border-color: #ddd6fe; color: var(--purple-dark); }
+      .turno-btn.folga.active { background: #f8fafc; border-color: #e2e8f0; color: #334155; }
 
-      footer { padding: 10px 2px 14px; color: var(--muted); font-size: 12px; text-align: right; }
+      /* O.S */
+      .ops-wrap { margin-top: 10px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+      .op-btn { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-weight: 600; font-size: 12px; text-align: center; }
+      .op-btn:hover { background: #f8fafc; }
+      .op-btn.active { background: #e0ecff; border-color: #bcd4ff; color: #0b3b8e; }
 
-      @media (max-width: 900px) {
-        .field-date { grid-column: span 6; }
-        .field-name { grid-column: span 6; }
-        .field-button { grid-column: span 12; }
-        .col-nome { width: 42%; }
-        .col-turma { width: 18%; }
-        .col-mat { width: 20%; }
-        .col-horario { width: 20%; }
-      }
+      @media (max-width: 900px) { .container { padding: 12px 12px 8px; } .ops-wrap { grid-template-columns: repeat(4, 1fr); } }
       @media (max-width: 600px) {
+        header h1 { font-size: 18px; }
+        header p { font-size: 12px; }
         .controls { grid-template-columns: repeat(6, 1fr); }
-        .field-date { grid-column: span 6; }
-        .field-name { grid-column: span 6; }
-        .field-button { grid-column: span 6; }
-        thead th, tbody td { font-size: 13px; padding: 10px; }
+        .field-date, .field-name, .field-button { grid-column: span 6; }
+        thead th, tbody td { font-size: 12px; padding: 9px; }
+        .table-scroll { max-height: 58vh; }
+        .turma-select, .data-select { grid-column: span 6; }
+        .turno-buttons { gap: 6px; }
+        .ops-wrap { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .op-btn { padding: 10px 8px; font-size: 12px; }
       }
+      @media (max-width: 380px) { .ops-wrap { grid-template-columns: repeat(2, 1fr); } }
     </style>
   </head>
   <body>
     <div class="container">
       <header>
         <h1>Consulta de Turnos</h1>
-        <p>Digite parte do nome e selecione a data. Use a alavanca única para alternar Dia ↔ Noite.</p>
+        <p>Use as abas para alternar entre Consulta por nome, Turmas e O.S.</p>
       </header>
 
-      <section class="controls">
-        <div class="field field-date">
-          <label for="data">Dia</label>
-          <input type="date" id="data" value="2025-11-01">
+      <nav class="tabs" role="tablist" aria-label="Navegação de abas">
+        <button id="tab-consulta" class="tab-btn" role="tab" aria-controls="panel-consulta" aria-selected="true">Consulta por nome</button>
+        <button id="tab-turmas" class="tab-btn" role="tab" aria-controls="panel-turmas" aria-selected="false">Turmas</button>
+        <button id="tab-os" class="tab-btn" role="tab" aria-controls="panel-os" aria-selected="false">O.S</button>
+      </nav>
+
+      <!-- Consulta por nome -->
+      <section id="panel-consulta" class="tab-panel active" role="tabpanel" aria-labelledby="tab-consulta">
+        <section class="controls">
+          <div class="field field-date">
+            <label for="data-consulta">Dia</label>
+            <input type="date" id="data-consulta">
+          </div>
+          <div class="field field-name">
+            <label for="nome-consulta">Nome do trabalhador</label>
+            <input type="text" id="nome-consulta" placeholder="Ex.: 'rafa', 'jo car', 'wllis', 'guti ben'">
+          </div>
+          <div class="field field-button">
+            <button class="primary" type="button" onclick="consultarTurno()">Consultar</button>
+          </div>
+        </section>
+
+        <div class="toggle-bar">
+          <span class="toggle-label">Horário:</span>
+          <div id="toggle-consulta" class="single-toggle state-day" role="button" tabindex="0" aria-label="Alternar horário Dia ou Noite" aria-live="polite">
+            <div class="side day">Dia</div>
+            <div class="side night">Noite</div>
+            <div class="thumb"></div>
+          </div>
         </div>
-        <div class="field field-name">
-          <label for="nome">Nome do trabalhador</label>
-          <input type="text" id="nome" placeholder="Ex.: 'rafa', 'jo car', 'wllis', 'guti ben'">
-        </div>
-        <div class="field field-button">
-          <button class="primary" type="button" onclick="consultarTurno()">Consultar</button>
+
+        <div id="mensagem-consulta" class="msg"></div>
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-nome">Nome</th>
+                  <th class="col-turma">Turma</th>
+                  <th class="col-mat">Matrícula</th>
+                  <th class="col-horario">Horário</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-consulta"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <div class="toggle-bar">
-        <span class="toggle-label">Horário:</span>
-        <div id="singleToggle" class="single-toggle state-day" role="button" tabindex="0" aria-label="Alternar horário Dia ou Noite" aria-live="polite">
-          <div class="side day">Dia</div>
-          <div class="side night">Noite</div>
-          <div class="thumb"></div>
+      <!-- Turmas -->
+      <section id="panel-turmas" class="tab-panel" role="tabpanel" aria-labelledby="tab-turmas">
+        <section class="turmas-controls">
+          <div class="field turma-select">
+            <label for="selectTurmaPersistente">Selecionar turma</label>
+            <select id="selectTurmaPersistente"></select>
+          </div>
+          <div class="field data-select">
+            <label for="data-turmas">Dia</label>
+            <input type="date" id="data-turmas">
+          </div>
+          <div class="turno-buttons">
+            <button id="btnDia" class="turno-btn day active" type="button">Dia</button>
+            <button id="btnNoite" class="turno-btn night" type="button">Noite</button>
+            <button id="btnFolga" class="turno-btn folga" type="button">Folga</button>
+          </div>
+        </section>
+
+        <div id="mensagem-turmas" class="msg"></div>
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-nome">Nome</th>
+                  <th class="col-turma">Turma</th>
+                  <th class="col-mat">Matrícula</th>
+                  <th class="col-horario">Horário</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-turmas"></tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div id="mensagem" class="msg"></div>
-
-      <div class="table-wrap">
-        <div class="table-scroll">
-          <table id="resultado">
-            <thead>
-              <tr>
-                <th class="col-nome">Nome</th>
-                <th class="col-turma">Turma</th>
-                <th class="col-mat">Matrícula</th>
-                <th class="col-horario">Horário</th>
-              </tr>
-            </thead>
-            <tbody id="resultado-body"></tbody>
-          </table>
+      <!-- O.S -->
+      <section id="panel-os" class="tab-panel" role="tabpanel" aria-labelledby="tab-os">
+        <div class="field">
+          <label class="toggle-label">Operações</label>
+          <div id="ops-container" class="ops-wrap"></div>
         </div>
-      </div>
 
-      <footer>
-        gpt-5 — alavanca única Dia ↔ Noite
-      </footer>
+        <div id="mensagem-os" class="msg"></div>
+
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 70%;">Local — Nº</th>
+                  <th style="width: 30%;">Nº O.S</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-os"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script>
-      // Estado da alavanca: "Dia" ou "Noite" (sempre um escolhido)
-      let filtroHorario = "Dia";
+      // Estados
+      let horarioConsulta = "Dia";
+      let turmaSelecionada = null;
+      let turnoSelecionado = "Dia";
 
-      // Utilidades de texto
-      function normalizarTexto(s) {
-        return (s || "")
-          .trim()
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
-      }
-      function tokenizar(s) {
-        return normalizarTexto(s).split(/\s+/).filter(Boolean);
-      }
-      function nomeCombina(parcial, nomeCompleto) {
-        const partes = tokenizar(parcial);
-        const nomeNorm = normalizarTexto(nomeCompleto);
-        return partes.every(p => nomeNorm.includes(p));
-      }
-      function mapTurno(letra) {
-        if (letra === "D") return "Dia";
-        if (letra === "N") return "Noite";
-        if (letra === "F") return "Folga";
-        return letra || "";
-      }
+      // Utilidades
+      function normalizarTexto(s) { return (s||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+      function tokenizar(s) { return normalizarTexto(s).split(/\s+/).filter(Boolean); }
+      function nomeCombina(parcial, nomeCompleto) { const partes = tokenizar(parcial); const nomeNorm = normalizarTexto(nomeCompleto); return partes.every(p => nomeNorm.includes(p)); }
+      function mapTurno(letra) { if (letra==="D") return "Dia"; if (letra==="N") return "Noite"; if (letra==="F") return "Folga"; return letra||""; }
       function gerarRegistros(nome, local, mat, turma, dias) {
-        const registros = [];
-        for (let i = 0; i < dias.length; i++) {
-          const dia = i + 1;
-          const data = `2025-11-${String(dia).padStart(2, "0")}`;
-          registros.push({
-            nome,
-            data,
-            turno: mapTurno(dias[i]),
-            turma: String(turma),
-            mat: String(mat),
-            local
-          });
+        const regs = [];
+        for (let i=0;i<dias.length;i++) {
+          const dia = i+1; const data = `${anoAtual}-${mesAtual}-${String(dia).padStart(2,"0")}`;
+          regs.push({ nome, data, turno: mapTurno(dias[i]), turma: String(turma), mat: String(mat), local });
         }
-        return registros;
+        return regs;
       }
 
-      // Dados gerados a partir do PDF (novembro/2025, dias 1-15)
+      // Data atual do aparelho
+      const hoje = new Date();
+      const anoAtual = hoje.getFullYear();
+      const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0");
+      const diaAtual = String(hoje.getDate()).padStart(2, "0");
+      const dataHojeStr = `${anoAtual}-${mesAtual}-${diaAtual}`;
+
+      // Dados completos (Grupos 1 a 10)
       const trabalhadores = [
         // Grupo 1
         ...gerarRegistros("RAFAEL WALLACE", "A-101", "108817", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
@@ -297,7 +299,7 @@
         ...gerarRegistros("JOSE RICARDO", "E-105", "105550", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
         ...gerarRegistros("DIOGO JOSE", "F-106", "108605", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
 
-        // Grupo 9
+   // Grupo 9
         ...gerarRegistros("ADRIANO DA SILVA", "B-102", "108573", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
         ...gerarRegistros("REGINALDO TRAJANO", "C-103", "108760", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
         ...gerarRegistros("ANDRE PEREIRA", "D-104", "108854", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
@@ -312,95 +314,217 @@
         ...gerarRegistros("LUCAS GABRIEL", "F-106", "108750", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"])
       ];
 
-      const corpo = document.getElementById('resultado-body');
-      const mensagem = document.getElementById('mensagem');
-      const singleToggle = document.getElementById('singleToggle');
+      // OS
+      const ordensServico = [
+        { numero: "545174", fazenda: "60 - ÁGUA BRANCA", operacao: "2228 - Montagem e Recolhimento M" },
+        { numero: "545175", fazenda: "60 - ÁGUA BRANCA", operacao: "3504 - Reboque de Implementos" },
+        { numero: "545176", fazenda: "60 - ÁGUA BRANCA", operacao: "2227 - Irrigação" },
+        { numero: "545177", fazenda: "60 - ÁGUA BRANCA", operacao: "2224 - Vigia" },
+        { numero: "545178", fazenda: "60 - ÁGUA BRANCA", operacao: "3620 - Transp. mater. diversos" },
+        { numero: "545179", fazenda: "78 - PASMADO", operacao: "2224 - Vigia" },
+        { numero: "545180", fazenda: "78 - PASMADO", operacao: "2228 - Montagem e Recolhimento M" },
+        { numero: "545181", fazenda: "78 - PASMADO", operacao: "3504 - Reboque de Implementos" },
+        { numero: "545182", fazenda: "78 - PASMADO", operacao: "2224 - Vigia" },
+        { numero: "545183", fazenda: "78 - PASMADO", operacao: "2227 - Irrigação" },
+        { numero: "545184", fazenda: "78 - PASMADO", operacao: "3620 - Transp. mater. diversos" },
+        { numero: "545185", fazenda: "77 - DO MEIO", operacao: "2224 - Vigia" },
+        { numero: "545186", fazenda: "77 - DO MEIO", operacao: "3620 - Transp. mater. diversos" },
+        { numero: "545187", fazenda: "67 - BURRO VELHO", operacao: "2228 - Montagem e Recolhimento M" },
+        { numero: "545188", fazenda: "67 - BURRO VELHO", operacao: "3504 - Reboque de Implementos" },
+        { numero: "545189", fazenda: "67 - BURRO VELHO", operacao: "2224 - Vigia" },
+        { numero: "545190", fazenda: "67 - BURRO VELHO", operacao: "2227 - Irrigação" },
+        { numero: "545191", fazenda: "67 - BURRO VELHO", operacao: "3620 - Transp. mater. diversos" },
+        { numero: "545192", fazenda: "CARRAPICHO", operacao: "2228 - Montagem e Recolhimento M" },
+        { numero: "545193", fazenda: "CARRAPICHO", operacao: "3504 - Reboque de Implementos" },
+        { numero: "545194", fazenda: "CARRAPICHO", operacao: "2224 - Vigia" },
+        { numero: "545195", fazenda: "CARRAPICHO", operacao: "2227 - Irrigação" }
+      ];
 
-      function limparTabela() { corpo.innerHTML = ""; }
-      function mostrarMensagem(texto, tipo = "") {
-        mensagem.className = "msg " + (tipo || "");
-        mensagem.textContent = texto || "";
+      // Referências
+      const dataConsulta = document.getElementById('data-consulta');
+      const nomeConsulta = document.getElementById('nome-consulta');
+      const msgConsulta = document.getElementById('mensagem-consulta');
+      const tbodyConsulta = document.getElementById('tbody-consulta');
+      const toggleConsulta = document.getElementById('toggle-consulta');
+
+      const selectTurmaPersistente = document.getElementById('selectTurmaPersistente');
+      const dataTurmas = document.getElementById('data-turmas');
+      const msgTurmas = document.getElementById('mensagem-turmas');
+      const tbodyTurmas = document.getElementById('tbody-turmas');
+
+      const btnDia = document.getElementById('btnDia');
+      const btnNoite = document.getElementById('btnNoite');
+      const btnFolga = document.getElementById('btnFolga');
+
+      const opsContainer = document.getElementById('ops-container');
+      const msgOS = document.getElementById('mensagem-os');
+      const tbodyOS = document.getElementById('tbody-os');
+
+      const tabConsulta = document.getElementById('tab-consulta');
+      const tabTurmas = document.getElementById('tab-turmas');
+      const tabOS = document.getElementById('tab-os');
+      const panelConsulta = document.getElementById('panel-consulta');
+      const panelTurmas = document.getElementById('panel-turmas');
+      const panelOS = document.getElementById('panel-os');
+
+      // Tabs
+      function selecionarAba(alvo) {
+        const isConsulta = alvo === 'consulta';
+        const isTurmas = alvo === 'turmas';
+        tabConsulta.setAttribute('aria-selected', isConsulta ? 'true' : 'false');
+        tabTurmas.setAttribute('aria-selected', isTurmas ? 'true' : 'false');
+        tabOS.setAttribute('aria-selected', (!isConsulta && !isTurmas) ? 'true' : 'false');
+        panelConsulta.classList.toggle('active', isConsulta);
+        panelTurmas.classList.toggle('active', isTurmas);
+        panelOS.classList.toggle('active', (!isConsulta && !isTurmas));
+        (isConsulta ? tabConsulta : isTurmas ? tabTurmas : tabOS).focus();
       }
+      tabConsulta.addEventListener('click', () => selecionarAba('consulta'));
+      tabTurmas.addEventListener('click', () => selecionarAba('turmas'));
+      tabOS.addEventListener('click', () => selecionarAba('os'));
 
-      function aplicarFiltroHorario(registros) {
-        return registros.filter(r => r.turno === filtroHorario);
-      }
+      // Helpers
+      function limparTabela(tbody) { tbody.innerHTML = ""; }
+      function mostrarMensagem(el, texto, tipo = "") { el.className = "msg " + (tipo || ""); el.textContent = texto || ""; }
 
+      // Consulta por nome
+      function aplicarFiltroHorarioConsulta(registros) { return registros.filter(r => r.turno === horarioConsulta); }
       function consultarTurno() {
-        const data = document.getElementById('data').value;
-        const nome = document.getElementById('nome').value;
-
-        limparTabela();
-        mostrarMensagem("");
-
-        if (!data || !nome) {
-          mostrarMensagem("Preencha a data e o nome antes de consultar.", "error");
-          return;
-        }
-
-        let resultados = trabalhadores.filter(t =>
-          t.data === data && nomeCombina(nome, t.nome)
-        );
-
-        resultados = aplicarFiltroHorario(resultados);
-
+        limparTabela(tbodyConsulta);
+        mostrarMensagem(msgConsulta, "");
+        const data = dataConsulta.value;
+        const nome = nomeConsulta.value;
+        if (!data || !nome) { mostrarMensagem(msgConsulta, "Preencha a data e o nome antes de consultar.", "error"); return; }
+        let resultados = trabalhadores.filter(t => t.data === data && nomeCombina(nome, t.nome));
+        resultados = aplicarFiltroHorarioConsulta(resultados);
         if (resultados.length > 0) {
           const frag = document.createDocumentFragment();
           resultados.forEach(t => {
             const tr = document.createElement('tr');
-
-            const tdNome = document.createElement('td'); tdNome.textContent = t.nome;
-            const tdTurma = document.createElement('td'); tdTurma.textContent = t.turma;
-            const tdMat = document.createElement('td'); tdMat.textContent = t.mat;
-            const tdHorario = document.createElement('td'); tdHorario.textContent = t.turno;
-
-            tr.appendChild(tdNome);
-            tr.appendChild(tdTurma);
-            tr.appendChild(tdMat);
-            tr.appendChild(tdHorario);
-
+            tr.innerHTML = `<td>${t.nome}</td><td>${t.turma}</td><td>${t.mat}</td><td>${t.turno}</td>`;
             frag.appendChild(tr);
           });
-          corpo.appendChild(frag);
-          mostrarMensagem(`${resultados.length} registro(s) encontrado(s).`, "success");
-        } else {
-          mostrarMensagem("Nenhum registro encontrado com os filtros informados.", "error");
+          tbodyConsulta.appendChild(frag);
+          mostrarMensagem(msgConsulta, `${resultados.length} registro(s) encontrado(s).`, "success");
+        } else { mostrarMensagem(msgConsulta, "Nenhum registro encontrado com os filtros informados.", "error"); }
+      }
+      function alternarHorarioConsulta(toggleEl) {
+        horarioConsulta = (horarioConsulta==="Dia") ? "Noite" : "Dia";
+        if (horarioConsulta==="Dia") { toggleEl.classList.remove("state-night"); toggleEl.classList.add("state-day"); toggleEl.setAttribute("aria-label","Horário atual: Dia. Clique para alternar para Noite."); }
+        else { toggleEl.classList.remove("state-day"); toggleEl.classList.add("state-night"); toggleEl.setAttribute("aria-label","Horário atual: Noite. Clique para alternar para Dia."); }
+        if (panelConsulta.classList.contains('active')) { if (tbodyConsulta.children.length>0) consultarTurno(); }
+      }
+      toggleConsulta.addEventListener('click', () => alternarHorarioConsulta(toggleConsulta));
+      toggleConsulta.addEventListener('keydown', (e) => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); alternarHorarioConsulta(toggleConsulta); } });
+
+      // Turmas
+      function obterTurmasUnicas() { const set = new Set(trabalhadores.map(t => t.turma)); return Array.from(set).sort((a,b)=>Number(a)-Number(b)); }
+      function popularSelectTurma() {
+        const turmas = obterTurmasUnicas();
+        selectTurmaPersistente.innerHTML = "";
+        turmas.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t; selectTurmaPersistente.appendChild(opt); });
+        if (!turmaSelecionada) turmaSelecionada = selectTurmaPersistente.value || turmas[0] || null;
+        else if (turmas.includes(turmaSelecionada)) selectTurmaPersistente.value = turmaSelecionada;
+      }
+      function atualizarBotaoTurnoAtivo() {
+        [btnDia, btnNoite, btnFolga].forEach(b => b.classList.remove('active'));
+        if (turnoSelecionado === "Dia") btnDia.classList.add('active');
+        else if (turnoSelecionado === "Noite") btnNoite.classList.add('active');
+        else btnFolga.classList.add('active');
+      }
+      function renderizarTurmaSelecionada() {
+        if (!turmaSelecionada) { mostrarMensagem(msgTurmas, "Selecione uma turma.", "error"); return; }
+        const data = dataTurmas.value;
+        limparTabela(tbodyTurmas);
+        mostrarMensagem(msgTurmas, "");
+        const resultados = trabalhadores
+          .filter(t => t.data === data && t.turma === turmaSelecionada && t.turno === turnoSelecionado)
+          .sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+        if (resultados.length === 0) {
+          mostrarMensagem(msgTurmas, `Nenhum registro para Turma ${turmaSelecionada} no horário ${turnoSelecionado} em ${data}.`, "error");
+          return;
         }
+        const frag = document.createDocumentFragment();
+        const headerTr = document.createElement('tr'); headerTr.className='grupo-header';
+        const headerTd = document.createElement('td'); headerTd.colSpan=4; headerTd.textContent = `Turma ${turmaSelecionada} — ${turnoSelecionado} (${resultados.length})`;
+        headerTr.appendChild(headerTd); frag.appendChild(headerTr);
+        resultados.forEach(t => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${t.nome}</td><td>${t.turma}</td><td>${t.mat}</td><td>${t.turno}</td>`;
+          frag.appendChild(tr);
+        });
+        tbodyTurmas.appendChild(frag);
+        mostrarMensagem(msgTurmas, `Exibindo Turma ${turmaSelecionada} no horário ${turnoSelecionado}.`, "success");
+      }
+      selectTurmaPersistente.addEventListener('change', () => { turmaSelecionada = selectTurmaPersistente.value; renderizarTurmaSelecionada(); });
+      dataTurmas.addEventListener('change', () => { renderizarTurmaSelecionada(); });
+      btnDia.addEventListener('click', () => { turnoSelecionado = "Dia"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
+      btnNoite.addEventListener('click', () => { turnoSelecionado = "Noite"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
+      btnFolga.addEventListener('click', () => { turnoSelecionado = "Folga"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
+
+      // O.S
+      function obterOperacoesUnicas() {
+        const mapa = new Map();
+        ordensServico.forEach(os => {
+          const [cod, ...resto] = os.operacao.split(" - ");
+          const nome = resto.join(" - ");
+          if (!mapa.has(cod)) mapa.set(cod, { codigo: cod, nome: nome || os.operacao });
+        });
+        return Array.from(mapa.values()).sort((a,b)=>a.codigo.localeCompare(b.codigo));
+      }
+      function renderizarBotoesOperacoes() {
+        opsContainer.innerHTML = "";
+        const ops = obterOperacoesUnicas();
+        ops.forEach(op => {
+          const btn = document.createElement('button');
+          btn.className = 'op-btn';
+          btn.type = 'button';
+          btn.dataset.codigo = op.codigo;
+          btn.textContent = `${op.codigo} - ${op.nome}`;
+          btn.addEventListener('click', () => filtrarPorOperacao(op.codigo, btn));
+          opsContainer.appendChild(btn);
+        });
+      }
+      function marcarAtivo(botao) {
+        document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+        if (botao) botao.classList.add('active');
+      }
+      function filtrarPorOperacao(codigo, botao) {
+        marcarAtivo(botao);
+        limparTabela(tbodyOS);
+        mostrarMensagem(msgOS, "");
+        const lista = ordensServico.filter(os => os.operacao.startsWith(codigo + " "));
+        if (lista.length === 0) {
+          mostrarMensagem(msgOS, `Nenhuma O.S para a operação ${codigo}.`, "error");
+          return;
+        }
+        const frag = document.createDocumentFragment();
+        lista.forEach(os => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${os.fazenda} — ${os.numero}</td><td>${os.numero}</td>`;
+          frag.appendChild(tr);
+        });
+        tbodyOS.appendChild(frag);
+        mostrarMensagem(msgOS, `Listadas ${lista.length} O.S para a operação ${codigo}.`, "success");
       }
 
-      // Alternância da alavanca (clique e teclado)
-      function alternarHorario() {
-        filtroHorario = (filtroHorario === "Dia") ? "Noite" : "Dia";
-        if (filtroHorario === "Dia") {
-          singleToggle.classList.remove("state-night");
-          singleToggle.classList.add("state-day");
-          singleToggle.setAttribute("aria-label", "Horário atual: Dia. Clique para alternar para Noite.");
-        } else {
-          singleToggle.classList.remove("state-day");
-          singleToggle.classList.add("state-night");
-          singleToggle.setAttribute("aria-label", "Horário atual: Noite. Clique para alternar para Dia.");
-        }
-        // Atualiza a lista se já houver resultados
-        if (corpo.children.length > 0) {
-          consultarTurno();
-        }
+      // Inicialização segura após carregar DOM
+      function init() {
+        // Setar datas com a data do aparelho
+        dataConsulta.value = dataHojeStr;
+        dataTurmas.value = dataHojeStr;
+        // Turmas
+        popularSelectTurma();
+        atualizarBotaoTurnoAtivo();
+        renderizarTurmaSelecionada();
+        // O.S
+        renderizarBotoesOperacoes();
       }
-
-      singleToggle.addEventListener('click', alternarHorario);
-      singleToggle.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternarHorario(); }
-      });
-
-      // Atalhos Enter nos inputs
-      document.getElementById('nome').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') consultarTurno();
-      });
-      document.getElementById('data').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') consultarTurno();
-      });
-
-      // Expor função ao botão
-      window.consultarTurno = consultarTurno;
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
     </script>
   </body>
   </html>
