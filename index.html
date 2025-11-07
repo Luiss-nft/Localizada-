@@ -1,530 +1,326 @@
   <!DOCTYPE html>
   <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title>Sistema de Turnos</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Escala 5x1 - Consulta Rápida</title>
     <style>
-      :root { --bg:#f6f7f8; --card:#ffffff; --text:#0f172a; --muted:#475569; --primary:#2563eb; --primary-dark:#1d4ed8; --danger:#b00020; --border:#e5e7eb; --zebra:#f9fafb; --green:#059669; --green-dark:#047857; --purple:#7c3aed; --purple-dark:#6d28d9; }
-      * { box-sizing: border-box; }
-      html, body { height: 100%; }
-      body { margin: 0; padding: 16px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-      .container { max-width: 980px; margin: 0 auto; background: var(--card); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.06); padding: 16px 14px 8px; }
-      header h1 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
-      header p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
-
-      .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-      .tab-btn { padding: 10px 12px; border: 1px solid transparent; border-radius: 10px 10px 0 0; cursor: pointer; background: transparent; color: var(--text); font-weight: 600; font-size: 13px; white-space: nowrap; flex: 0 0 auto; }
-      .tab-btn[aria-selected="true"] { background: #fff; border-color: var(--border); border-bottom-color: #fff; }
-      .tab-panel { display: none; padding-top: 12px; }
-      .tab-panel.active { display: block; }
-
-      .controls { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; align-items: end; margin-top: 10px; }
-      .field { display: flex; flex-direction: column; gap: 6px; }
-      .field label { font-size: 12px; color: var(--muted); }
-      .field input, .field select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; width: 100%; }
-      button.primary, button.secondary { padding: 12px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; }
-      button.primary { border: 0; background: var(--primary); color: #fff; }
-      button.primary:hover { background: var(--primary-dark); }
-      button.secondary { border: 1px solid var(--border); background: #f8fafc; color: var(--text); }
-      button.secondary:hover { background: #eef2f7; }
-
-      .toggle-bar { margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-      .toggle-label { font-size: 12px; color: var(--muted); }
-      .single-toggle { position: relative; width: 220px; height: 42px; border-radius: 999px; background: #f1f5f9; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; cursor: pointer; user-select: none; }
-      .single-toggle .side { display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; z-index: 1; color: #475569; }
-      .single-toggle .side.day { color: var(--green-dark); }
-      .single-toggle .side.night { color: var(--purple-dark); }
-      .single-toggle .thumb { position: absolute; top: 2px; width: 108px; height: 38px; border-radius: 999px; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12); transition: left .22s ease; border: 2px solid transparent; }
-      .single-toggle.state-day .thumb { left: 2px; border-color: #10b98122; }
-      .single-toggle.state-night .thumb { left: 110px; border-color: #8b5cf622; }
-      .single-toggle.state-day { background: #ecfdf5; border-color: #a7f3d0; }
-      .single-toggle.state-night { background: #f5f3ff; border-color: #ddd6fe; }
-
-      .msg { margin-top: 8px; font-size: 13px; color: var(--muted); }
-      .msg.error { color: var(--danger); }
-      .msg.success { color: #065f46; }
-
-      .table-wrap { margin-top: 12px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
-      .table-scroll { overflow: auto; max-height: 62vh; -webkit-overflow-scrolling: touch; }
-      table { border-collapse: separate; border-spacing: 0; width: 100%; table-layout: fixed; }
-      thead th { position: sticky; top: 0; z-index: 1; background: #0f172a; color: #fff; text-align: left; font-weight: 600; font-size: 12px; padding: 10px; }
-      tbody td { padding: 10px; border-top: 1px solid var(--border); vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere; font-size: 13px; color: #111827; }
-      tbody tr:nth-child(even) td { background: var(--zebra); }
-      .col-nome { width: 42%; } .col-turma { width: 18%; } .col-mat { width: 20%; } .col-horario { width: 20%; }
-      .grupo-header { background: #f1f5f9; color: #0f172a; font-weight: 700; border-top: 1px solid var(--border); }
-      .grupo-header td { padding: 8px 10px; font-size: 12px; }
-
-      /* Turmas */
-      .turmas-controls { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; align-items: end; margin-top: 10px; }
-      .turma-select { grid-column: span 6; }
-      .data-select { grid-column: span 6; }
-      .turno-buttons { grid-column: span 12; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-      .turno-btn { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-weight: 700; font-size: 13px; }
-      .turno-btn.active { background: #ecfdf5; border-color: #a7f3d0; color: var(--green-dark); }
-      .turno-btn.night.active { background: #f5f3ff; border-color: #ddd6fe; color: var(--purple-dark); }
-      .turno-btn.folga.active { background: #f8fafc; border-color: #e2e8f0; color: #334155; }
-
-      /* O.S */
-      .ops-wrap { margin-top: 10px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
-      .op-btn { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-weight: 600; font-size: 12px; text-align: center; }
-      .op-btn:hover { background: #f8fafc; }
-      .op-btn.active { background: #e0ecff; border-color: #bcd4ff; color: #0b3b8e; }
-
-      @media (max-width: 900px) { .container { padding: 12px 12px 8px; } .ops-wrap { grid-template-columns: repeat(4, 1fr); } }
-      @media (max-width: 600px) {
-        header h1 { font-size: 18px; }
-        header p { font-size: 12px; }
-        .controls { grid-template-columns: repeat(6, 1fr); }
-        .field-date, .field-name, .field-button { grid-column: span 6; }
-        thead th, tbody td { font-size: 12px; padding: 9px; }
-        .table-scroll { max-height: 58vh; }
-        .turma-select, .data-select { grid-column: span 6; }
-        .turno-buttons { gap: 6px; }
-        .ops-wrap { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .op-btn { padding: 10px 8px; font-size: 12px; }
+      :root{
+        --bg:#ffffff;
+        --text:#0f172a;
+        --muted:#64748b;
+        --border:#e5e7eb;
+        --accent:#2563eb;
+        --accent-2:#0ea5e9;
+        --danger:#ef4444;
+        --success:#16a34a;
+        --warning:#f59e0b;
+        --chip:#f1f5f9;
+        --shadow:0 1px 2px rgba(0,0,0,.06), 0 4px 10px rgba(0,0,0,.04);
       }
-      @media (max-width: 380px) { .ops-wrap { grid-template-columns: repeat(2, 1fr); } }
+      *{box-sizing:border-box}
+      body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:var(--text)}
+      header{position:sticky; top:0; z-index:10; background:rgba(255,255,255,.9); backdrop-filter:blur(6px); border-bottom:1px solid var(--border)}
+      .container{max-width:1060px; margin:0 auto; padding:16px}
+      h1{font-size:20px; margin:0 0 8px}
+      .sub{font-size:12px; color:var(--muted)}
+      .controls{display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; align-items:end; margin-top:12px}
+      .col-4{grid-column:span 4}
+      .col-12{grid-column:span 12}
+      @media (max-width: 768px){ .col-4{grid-column:span 12} }
+      label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+      input[type="date"]{width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:#fff; color:var(--text)}
+      .chip{display:inline-block; padding:6px 10px; border-radius:999px; background:var(--chip); border:1px solid var(--border); font-size:12px; color:#0f172a}
+      .toggle-2{position:relative; width:100%; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); padding:6px; display:flex; gap:6px}
+      .toggle-2 button{flex:1; padding:10px 12px; border:none; border-radius:8px; background:transparent; color:#0f172a; cursor:pointer; font-weight:600}
+      .toggle-2 button.active{background:var(--accent); color:#fff}
+      .toggle-3{position:relative; width:100%; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:6px; box-shadow:var(--shadow)}
+      .toggle-3 button{padding:10px 12px; border:none; border-radius:8px; background:transparent; color:#0f172a; cursor:pointer; font-weight:600}
+      .toggle-3 button.active.D{background:#16a34a; color:#fff}
+      .toggle-3 button.active.N{background:var(--accent-2); color:#fff}
+      .toggle-3 button.active.F{background:var(--danger); color:#fff}
+      .list{margin-top:16px; border:1px solid var(--border); border-radius:12px; background:#fff; box-shadow:var(--shadow); overflow:hidden}
+      .row{display:grid; grid-template-columns: 2fr 1fr .8fr .8fr 2fr 1.1fr; gap:8px; padding:10px 12px; border-bottom:1px solid var(--border); align-items:center}
+      .row.header{background:#f8fafc; font-weight:600}
+      .row:last-child{border-bottom:none}
+      .count{margin-top:12px; font-size:12px; color:var(--muted)}
+      .empty{padding:24px; text-align:center; color:var(--muted)}
+      @media (max-width: 640px){ .row{grid-template-columns: 1.6fr .9fr .7fr .7fr 1.5fr 1fr; font-size:13px} }
+      .presence{display:flex; align-items:center; gap:10px; justify-content:flex-end}
+      .pill{display:flex; gap:8px; align-items:center}
+      .dot-btn{width:22px; height:22px; border-radius:999px; border:none; cursor:pointer; box-shadow:inset 0 0 0 2px var(--border)}
+      .dot-btn.green{background:var(--success)}
+      .dot-btn.red{background:var(--danger)}
+      .dot-btn.yellow{background:var(--warning)}
+      .dot-btn:active{transform:scale(.98)}
+      .mini{display:inline-block; width:10px; height:10px; border-radius:999px}
+      .mini.green{background:var(--success)}
+      .mini.red{background:var(--danger)}
+      .mini.yellow{background:var(--warning)}
     </style>
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>Consulta de Turnos</h1>
-        <p>Use as abas para alternar entre Consulta por nome, Turmas e O.S.</p>
-      </header>
+    <header>
+      <div class="container">
+        <h1>Consulta Rápida – Escala 5x1</h1>
+        <div class="sub">Turnos conforme o PDF enviado. Data espelha o relógio do aparelho. Marque Presente, Falta ou Emprestado — tudo fica salvo no dispositivo.</div>
 
-      <nav class="tabs" role="tablist" aria-label="Navegação de abas">
-        <button id="tab-consulta" class="tab-btn" role="tab" aria-controls="panel-consulta" aria-selected="true">Consulta por nome</button>
-        <button id="tab-turmas" class="tab-btn" role="tab" aria-controls="panel-turmas" aria-selected="false">Turmas</button>
-        <button id="tab-os" class="tab-btn" role="tab" aria-controls="panel-os" aria-selected="false">O.S</button>
-      </nav>
-
-      <!-- Consulta por nome -->
-      <section id="panel-consulta" class="tab-panel active" role="tabpanel" aria-labelledby="tab-consulta">
-        <section class="controls">
-          <div class="field field-date">
-            <label for="data-consulta">Dia</label>
-            <input type="date" id="data-consulta">
+        <div class="controls">
+          <div class="col-4">
+            <label>Líder</label>
+            <div class="toggle-2" id="leaderToggle">
+              <button data-leader="luiz" class="active">Luiz</button>
+              <button data-leader="romero">Romero</button>
+            </div>
           </div>
-          <div class="field field-name">
-            <label for="nome-consulta">Nome do trabalhador</label>
-            <input type="text" id="nome-consulta" placeholder="Ex.: 'rafa', 'jo car', 'wllis', 'guti ben'">
+          <div class="col-4">
+            <label>Turno</label>
+            <div class="toggle-3" id="turnoToggle">
+              <button data-turno="D" class="active D">Dia</button>
+              <button data-turno="N">Noite</button>
+              <button data-turno="F">Folga</button>
+            </div>
           </div>
-          <div class="field field-button">
-            <button class="primary" type="button" onclick="consultarTurno()">Consultar</button>
+          <div class="col-4">
+            <label for="date">Data</label>
+            <input type="date" id="date"/>
           </div>
-        </section>
-
-        <div class="toggle-bar">
-          <span class="toggle-label">Horário:</span>
-          <div id="toggle-consulta" class="single-toggle state-day" role="button" tabindex="0" aria-label="Alternar horário Dia ou Noite" aria-live="polite">
-            <div class="side day">Dia</div>
-            <div class="side night">Noite</div>
-            <div class="thumb"></div>
+          <div class="col-12">
+            <span class="chip">Período: 5 a 20 (Novembro)</span>
+            <span class="chip">Presença: <span class="mini green"></span> • Falta: <span class="mini red"></span> • Emprestado: <span class="mini yellow"></span></span>
           </div>
         </div>
+      </div>
+    </header>
 
-        <div id="mensagem-consulta" class="msg"></div>
-
-        <div class="table-wrap">
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-nome">Nome</th>
-                  <th class="col-turma">Turma</th>
-                  <th class="col-mat">Matrícula</th>
-                  <th class="col-horario">Horário</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-consulta"></tbody>
-            </table>
-          </div>
+    <main class="container">
+      <div class="count" id="count"></div>
+      <div class="list" id="list">
+        <div class="row header">
+          <div>Nome</div>
+          <div>Matrícula</div>
+          <div>Turma</div>
+          <div>Turno</div>
+          <div>Função</div>
+          <div class="presence">Marcação</div>
         </div>
-      </section>
-
-      <!-- Turmas -->
-      <section id="panel-turmas" class="tab-panel" role="tabpanel" aria-labelledby="tab-turmas">
-        <section class="turmas-controls">
-          <div class="field turma-select">
-            <label for="selectTurmaPersistente">Selecionar turma</label>
-            <select id="selectTurmaPersistente"></select>
-          </div>
-          <div class="field data-select">
-            <label for="data-turmas">Dia</label>
-            <input type="date" id="data-turmas">
-          </div>
-          <div class="turno-buttons">
-            <button id="btnDia" class="turno-btn day active" type="button">Dia</button>
-            <button id="btnNoite" class="turno-btn night" type="button">Noite</button>
-            <button id="btnFolga" class="turno-btn folga" type="button">Folga</button>
-          </div>
-        </section>
-
-        <div id="mensagem-turmas" class="msg"></div>
-
-        <div class="table-wrap">
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-nome">Nome</th>
-                  <th class="col-turma">Turma</th>
-                  <th class="col-mat">Matrícula</th>
-                  <th class="col-horario">Horário</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-turmas"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- O.S -->
-      <section id="panel-os" class="tab-panel" role="tabpanel" aria-labelledby="tab-os">
-        <div class="field">
-          <label class="toggle-label">Operações</label>
-          <div id="ops-container" class="ops-wrap"></div>
-        </div>
-
-        <div id="mensagem-os" class="msg"></div>
-
-        <div class="table-wrap">
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 70%;">Local — Nº</th>
-                  <th style="width: 30%;">Nº O.S</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-os"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </div>
+        <div id="body"></div>
+      </div>
+      <div class="empty" id="empty" style="display:none">Nenhum registro para os filtros.</div>
+    </main>
 
     <script>
-      // Estados
-      let horarioConsulta = "Dia";
-      let turmaSelecionada = null;
-      let turnoSelecionado = "Dia";
+      const STORAGE_KEY = "escala_presencas_v2";
+      const LEADERS = {
+        luiz: [670, 671, 672, 673, 674, 675],
+        romero: [676, 677, 678, 679, 680, 681],
+      };
 
-      // Utilidades
-      function normalizarTexto(s) { return (s||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-      function tokenizar(s) { return normalizarTexto(s).split(/\s+/).filter(Boolean); }
-      function nomeCombina(parcial, nomeCompleto) { const partes = tokenizar(parcial); const nomeNorm = normalizarTexto(nomeCompleto); return partes.every(p => nomeNorm.includes(p)); }
-      function mapTurno(letra) { if (letra==="D") return "Dia"; if (letra==="N") return "Noite"; if (letra==="F") return "Folga"; return letra||""; }
-      function gerarRegistros(nome, local, mat, turma, dias) {
-        const regs = [];
-        for (let i=0;i<dias.length;i++) {
-          const dia = i+1; const data = `${anoAtual}-${mesAtual}-${String(dia).padStart(2,"0")}`;
-          regs.push({ nome, data, turno: mapTurno(dias[i]), turma: String(turma), mat: String(mat), local });
-        }
-        return regs;
+      function getLocalDateStringToday(){
+        const now = new Date();
+        const localISO = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString();
+        return localISO.slice(0,10);
+      }
+      function dayFromDate(dateStr){
+        const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
+        if(!y||!m||!d) return null;
+        const dt = new Date(y, m-1, d, 12, 0, 0);
+        return isNaN(dt) ? null : dt.getDate();
       }
 
-      // Data atual do aparelho
-      const hoje = new Date();
-      const anoAtual = hoje.getFullYear();
-      const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0");
-      const diaAtual = String(hoje.getDate()).padStart(2, "0");
-      const dataHojeStr = `${anoAtual}-${mesAtual}-${diaAtual}`;
+      // BASE 100% derivada do PDF enviado (5–20)
+      const DATA = [
+        // Luiz 670–675
+        { local:"OPERADOR POÇO", mat:"108817", nome:"RAFAEL WALLACE", turma:670, agenda:{5:"D",6:"D",7:"D",8:"D",9:"D",10:"F",11:"N",12:"N",13:"N",14:"N",15:"N",16:"F",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"OPERADOR RIO", mat:"108813", nome:"JOSE CARLOS", turma:671, agenda:{5:"F",6:"D",7:"D",8:"D",9:"D",10:"D",11:"F",12:"N",13:"N",14:"N",15:"N",16:"N",17:"F",18:"D",19:"D",20:"D"} },
+        { local:"CONV. 1 CARRAPICHO", mat:"108815", nome:"MATEUS HENRIQUE", turma:672, agenda:{5:"N",6:"F",7:"D",8:"D",9:"D",10:"D",11:"D",12:"F",13:"N",14:"N",15:"N",16:"N",17:"N",18:"F",19:"D",20:"D"} },
+        { local:"CONV. 2 CARRAPICHO", mat:"108818", nome:"TIAGO GALDINO", turma:673, agenda:{5:"N",6:"N",7:"F",8:"D",9:"D",10:"D",11:"D",12:"D",13:"F",14:"N",15:"N",16:"N",17:"N",18:"N",19:"F",20:"D"} },
+        { local:"CONV. 2 CARRAPICHO", mat:"108814", nome:"MADSON DE SANTANA", turma:674, agenda:{5:"N",6:"N",7:"N",8:"F",9:"D",10:"D",11:"D",12:"D",13:"D",14:"F",15:"N",16:"N",17:"N",18:"N",19:"N",20:"F"} },
+        { local:"FOLGUISTA", mat:"109092", nome:"JOSEILDO VICENTE", turma:675, agenda:{5:"N",6:"N",7:"N",8:"N",9:"F",10:"D",11:"D",12:"D",13:"D",14:"D",15:"F",16:"N",17:"N",18:"N",19:"N",20:"N"} },
 
-      // Dados completos (Grupos 1 a 10)
-      const trabalhadores = [
-        // Grupo 1
-        ...gerarRegistros("RAFAEL WALLACE", "A-101", "108817", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
-        ...gerarRegistros("JOSE CARLOS", "B-102", "108813", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
-        ...gerarRegistros("MATEUS HENRIQUE", "C-103", "108815", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
-        ...gerarRegistros("TIAGO GALDINO", "D-104", "108818", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
-        ...gerarRegistros("MADSON DE SANTANA", "E-105", "108814", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
-        ...gerarRegistros("JOSEILDO VICENTE", "F-106", "109092", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+        { local:"OPERADOR PASMADO", mat:"108445", nome:"JOSE GERVASIO", turma:670, agenda:{5:"D",6:"D",7:"D",8:"D",9:"D",10:"F",11:"N",12:"N",13:"N",14:"N",15:"N",16:"F",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"CONV. PASMADO", mat:"108432", nome:"DANIEL ALVES", turma:671, agenda:{5:"F",6:"D",7:"D",8:"D",9:"D",10:"D",11:"F",12:"N",13:"N",14:"N",15:"N",16:"N",17:"F",18:"D",19:"D",20:"D"} },
+        { local:"CONV. 1 CARRAPICHO", mat:"108812", nome:"JOAO VITOR", turma:672, agenda:{5:"N",6:"F",7:"D",8:"D",9:"D",10:"D",11:"D",12:"F",13:"N",14:"N",15:"N",16:"N",17:"N",18:"F",19:"D",20:"D"} },
+        { local:"BAIXA PRESSAO PASM.", mat:"108614", nome:"ENIO PEREIRA", turma:673, agenda:{5:"N",6:"N",7:"F",8:"D",9:"D",10:"D",11:"D",12:"D",13:"F",14:"N",15:"N",16:"N",17:"N",18:"N",19:"F",20:"D"} },
+        { local:"SOBRA", mat:"108674", nome:"TIAGO HENRIQUE", turma:674, agenda:{5:"N",6:"N",7:"N",8:"F",9:"D",10:"D",11:"D",12:"D",13:"D",14:"F",15:"N",16:"N",17:"N",18:"N",19:"N",20:"F"} },
+        { local:"FOLGUISTA", mat:"108725", nome:"JEAN MARCOS", turma:675, agenda:{5:"N",6:"N",7:"N",8:"N",9:"F",10:"D",11:"D",12:"D",13:"D",14:"D",15:"F",16:"N",17:"N",18:"N",19:"N",20:"N"} },
 
-        // Grupo 2
-        ...gerarRegistros("JOSE GERVASIO", "A-101", "108445", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
-        ...gerarRegistros("DANIEL ALVES", "B-102", "108432", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
-        ...gerarRegistros("JOAO VITOR", "C-103", "108812", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
-        ...gerarRegistros("ENIO PEREIRA", "D-104", "108614", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
-        ...gerarRegistros("TIAGO HENRIQUE", "E-105", "108674", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
-        ...gerarRegistros("JEAN MARCOS", "F-106", "108725", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+        { local:"POÇO BURRO VELHO", mat:"105510", nome:"EDSON FERNANDO", turma:670, agenda:{5:"D",6:"D",7:"D",8:"D",9:"D",10:"F",11:"N",12:"N",13:"N",14:"N",15:"N",16:"F",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"APOIO", mat:"108801", nome:"PEDRO GUILHERME", turma:671, agenda:{5:"F",6:"D",7:"D",8:"D",9:"D",10:"D",11:"F",12:"N",13:"N",14:"N",15:"N",16:"N",17:"F",18:"D",19:"D",20:"D"} },
+        { local:"PIVOT B1", mat:"105599", nome:"WANDERSON JOSE", turma:672, agenda:{5:"N",6:"F",7:"D",8:"D",9:"D",10:"D",11:"D",12:"F",13:"N",14:"N",15:"N",16:"N",17:"N",18:"F",19:"D",20:"D"} },
+        { local:"PIVOT B2", mat:"108601", nome:"BRENO RAY", turma:673, agenda:{5:"N",6:"N",7:"F",8:"D",9:"D",10:"D",11:"D",12:"D",13:"F",14:"N",15:"N",16:"N",17:"N",18:"N",19:"F",20:"D"} },
+        { local:"OP. PASSAGEM MANGAIPE", mat:"109088", nome:"EVANDRO RAIMUDO", turma:674, agenda:{5:"N",6:"N",7:"N",8:"F",9:"D",10:"D",11:"D",12:"D",13:"D",14:"F",15:"N",16:"N",17:"N",18:"N",19:"N",20:"F"} },
+        { local:"FOLGUISTA", mat:"108748", nome:"JUNIOR RICARDO", turma:675, agenda:{5:"N",6:"N",7:"N",8:"N",9:"F",10:"D",11:"D",12:"D",13:"D",14:"D",15:"F",16:"N",17:"N",18:"N",19:"N",20:"N"} },
 
-        // Grupo 3
-        ...gerarRegistros("EDSON FERNANDO", "A-101", "105510", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
-        ...gerarRegistros("PEDRO HENRIQUE", "B-102", "108801", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
-        ...gerarRegistros("WANDERSON JOSE", "C-103", "105599", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
-        ...gerarRegistros("BRENO RAY", "D-104", "108601", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
-        ...gerarRegistros("GEREMIAS ROSA", "E-105", "108627", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
-        ...gerarRegistros("JUNIOR RICARDO", "F-106", "108748", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+        // Romero 676–681
+        { local:"OPERADOR POÇO", mat:"108810", nome:"GUTEMBERG BENARDO", turma:676, agenda:{5:"N",6:"N",7:"N",8:"N",9:"N",10:"F",11:"D",12:"D",13:"D",14:"D",15:"D",16:"F",17:"N",18:"N",19:"N",20:"N"} },
+        { local:"OPERADOR RIO", mat:"108816", nome:"PEDRO CARLOS", turma:677, agenda:{5:"F",6:"N",7:"N",8:"N",9:"N",10:"N",11:"F",12:"D",13:"D",14:"D",15:"D",16:"D",17:"F",18:"N",19:"N",20:"N"} },
+        { local:"CONV. 1 CARRAPICHO", mat:"108809", nome:"ARLAN ANTONIO", turma:678, agenda:{5:"D",6:"F",7:"N",8:"N",9:"N",10:"N",11:"N",12:"F",13:"D",14:"D",15:"D",16:"D",17:"D",18:"F",19:"N",20:"N"} },
+        { local:"CONV. 2 CARRAPICHO", mat:"108811", nome:"IGOR SILVA", turma:679, agenda:{5:"D",6:"D",7:"F",8:"N",9:"N",10:"N",11:"N",12:"N",13:"F",14:"D",15:"D",16:"D",17:"D",18:"D",19:"F",20:"N"} },
+        { local:"CONV. 2 CARRAPICHO", mat:"108807", nome:"GILIADRO FERREIRA", turma:680, agenda:{5:"D",6:"D",7:"D",8:"F",9:"N",10:"N",11:"N",12:"N",13:"N",14:"F",15:"D",16:"D",17:"D",18:"D",19:"D",20:"F"} },
+        { local:"FOLGUISTA", mat:"109099", nome:"MANOEL ROBERTO", turma:681, agenda:{5:"D",6:"D",7:"D",8:"D",9:"F",10:"N",11:"N",12:"N",13:"N",14:"N",15:"F",16:"D",17:"D",18:"D",19:"D",20:"D"} },
 
-        // Grupo 4
-        ...gerarRegistros("LUIZ HENRIQUE", "A-101", "108755", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
-        ...gerarRegistros("EDUARDO PEREIRA", "B-102", "107955", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
-        ...gerarRegistros("BRENO HENRIQUE", "C-103", "108713", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
-        ...gerarRegistros("GABRIEL RIBEIRO", "D-104", "108625", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
-        ...gerarRegistros("IVAN JOSE", "E-105", "108636", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
-        ...gerarRegistros("JOSE CARLOS", "F-106", "109083", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+        { local:"OPERADOR PASMADO", mat:"108432", nome:"GUTEMBERGUE DA SILVA", turma:676, agenda:{5:"N",6:"N",7:"N",8:"N",9:"N",10:"F",11:"D",12:"D",13:"D",14:"D",15:"D",16:"F",17:"N",18:"N",19:"N",20:"N"} },
+        { local:"CONV. PASMADO", mat:"108430", nome:"RUAN FERNANDO", turma:677, agenda:{5:"F",6:"N",7:"N",8:"N",9:"N",10:"N",11:"F",12:"D",13:"D",14:"D",15:"D",16:"D",17:"F",18:"N",19:"N",20:"N"} },
+        { local:"CONV. 1 CARRAPICHO", mat:"108808", nome:"VICTOR IZAU", turma:678, agenda:{5:"D",6:"F",7:"N",8:"N",9:"N",10:"N",11:"N",12:"F",13:"D",14:"D",15:"D",16:"D",17:"D",18:"F",19:"N",20:"N"} },
+        { local:"CONV. PASMADO", mat:"107118", nome:"GERSON FELIPE", turma:679, agenda:{5:"D",6:"D",7:"F",8:"N",9:"N",10:"N",11:"N",12:"N",13:"F",14:"D",15:"D",16:"D",17:"D",18:"D",19:"F",20:"N"} },
+        { local:"SOBRA", mat:"108806", nome:"FELIPE MAURICIO", turma:680, agenda:{5:"D",6:"D",7:"D",8:"F",9:"N",10:"N",11:"N",12:"N",13:"N",14:"F",15:"D",16:"D",17:"D",18:"D",19:"D",20:"F"} },
+        { local:"FOLGUISTA", mat:"108771", nome:"MATEUS RIBEIRO", turma:681, agenda:{5:"D",6:"D",7:"D",8:"D",9:"F",10:"N",11:"N",12:"N",13:"N",14:"N",15:"F",16:"D",17:"D",18:"D",19:"D",20:"D"} },
 
-        // Grupo 5
-        ...gerarRegistros("LEANDRO JOSE", "A-101", "109087", "670", ["N","N","N","F","D","D","D","D","D","F","N","N","N","N","N"]),
-        ...gerarRegistros("MARCIO ABDIAS", "B-102", "109090", "671", ["N","N","N","N","F","D","D","D","D","D","F","N","N","N","N"]),
-        ...gerarRegistros("MARCONE JOSE", "C-103", "109027", "672", ["N","N","N","N","N","F","D","D","D","D","D","F","N","N","N"]),
-        ...gerarRegistros("GABRIEL DIAS", "D-104", "108720", "673", ["F","N","N","N","N","N","F","D","D","D","D","D","F","N","N"]),
-        ...gerarRegistros("JAILSON BATISTA", "E-105", "109093", "674", ["D","F","N","N","N","N","N","F","D","D","D","D","D","F","N"]),
-        ...gerarRegistros("WLLISSES ISAAC", "F-106", "108766", "675", ["D","D","F","N","N","N","N","N","F","D","D","D","D","D","F"]),
+        // Bloco “B. PRESSAO BOTA FOGO” do PDF: Leandro José estava em 670 e dia 6 = D
+        { local:"B. PRESSAO BOTA FOGO", mat:"109087", nome:"LEANDRO JOSE", turma:670, agenda:{5:"D",6:"D",7:"D",8:"D",9:"D",10:"F",11:"N",12:"N",13:"N",14:"N",15:"N",16:"F",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"B. PRESSAO BOTA FOGO", mat:"109090", nome:"MARCIO ABDIAS", turma:671, agenda:{5:"F",6:"D",7:"D",8:"D",9:"D",10:"D",11:"F",12:"N",13:"N",14:"N",15:"N",16:"N",17:"F",18:"D",19:"D",20:"D"} },
+        { local:"BAIXA PRESSAO BV", mat:"109027", nome:"MARCONE JOSE", turma:672, agenda:{5:"N",6:"F",7:"D",8:"D",9:"D",10:"D",11:"D",12:"F",13:"N",14:"N",15:"N",16:"N",17:"N",18:"F",19:"D",20:"D"} },
+        { local:"BAIXA PRESSAO BV", mat:"108720", nome:"GABRIEL DIAS", turma:673, agenda:{5:"N",6:"N",7:"F",8:"D",9:"D",10:"D",11:"D",12:"D",13:"F",14:"N",15:"N",16:"N",17:"N",18:"N",19:"F",20:"D"} },
+        { local:"OP BOTA FOGO BP", mat:"109093", nome:"JAILSON BATISTA", turma:674, agenda:{5:"N",6:"N",7:"N",8:"F",9:"D",10:"D",11:"D",12:"D",13:"D",14:"F",15:"N",16:"N",17:"N",18:"N",19:"N",20:"F"} },
+        { local:"FOLGUISTA", mat:"108766", nome:"WLLISSES ISAAC", turma:675, agenda:{5:"N",6:"N",7:"N",8:"N",9:"F",10:"D",11:"D",12:"D",13:"D",14:"D",15:"F",16:"N",17:"N",18:"N",19:"N",20:"N"} },
 
-        // Grupo 6
-        ...gerarRegistros("GUTEMBERG BENARDO", "A-101", "108810", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
-        ...gerarRegistros("PEDRO CARLOS", "B-102", "108816", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
-        ...gerarRegistros("ARLAN ANTONIO", "C-103", "108809", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
-        ...gerarRegistros("IGOR SILVA", "D-104", "108811", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
-        ...gerarRegistros("GILIADRO FERREIRA", "E-105", "108807", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
-        ...gerarRegistros("MANOEL ROBERTO", "F-106", "109099", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+        // Demais blocos do PDF (adicionados conforme leitura do texto)
+        { local:"B. PRESSAO M. FEDERAL", mat:"108755", nome:"LUIZ HENRIQUE", turma:670, agenda:{5:"D",6:"D",7:"D",8:"D",9:"D",10:"F",11:"N",12:"N",13:"N",14:"N",15:"N",16:"F",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"B. PRESSAO M. FEDERAL", mat:"107955", nome:"EDUARDO PEREIRA", turma:671, agenda:{5:"F",6:"D",7:"D",8:"D",9:"D",10:"D",11:"F",12:"N",13:"N",14:"N",15:"N",16:"N",17:"F",18:"D",19:"D",20:"D"} },
+        { local:"B. PRESSAO M. 27419", mat:"108713", nome:"BRENO HENRIQUE", turma:672, agenda:{5:"N",6:"F",7:"D",8:"D",9:"D",10:"D",11:"D",12:"F",13:"N",14:"N",15:"N",16:"N",17:"N",18:"F",19:"D",20:"D"} },
+        { local:"B. PRESSAO M. 27419", mat:"108625", nome:"GABRIEL RIBEIRO", turma:673, agenda:{5:"N",6:"N",7:"F",8:"D",9:"D",10:"D",11:"D",12:"D",13:"F",14:"N",15:"N",16:"N",17:"N",18:"N",19:"F",20:"D"} },
+        { local:"OP. MANGAIPE DEDE", mat:"108627", nome:"GEREMIAS ROSA", turma:674, agenda:{5:"N",6:"N",7:"N",8:"F",9:"D",10:"D",11:"D",12:"D",13:"D",14:"F",15:"N",16:"N",17:"N",18:"N",19:"N",20:"F"} },
+        { local:"FOLGUISTA", mat:"109083", nome:"JOSE CARLOS", turma:675, agenda:{5:"N",6:"N",7:"N",8:"N",9:"F",10:"D",11:"D",12:"D",13:"D",14:"D",15:"F",16:"N",17:"N",18:"N",19:"N",20:"N"} },
 
-        // Grupo 7
-        ...gerarRegistros("GUTEMBERGUE DA SILVA", "A-101", "108432", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
-        ...gerarRegistros("RUAN FERNANDO", "B-102", "108430", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
-        ...gerarRegistros("VICTOR IZAU", "C-103", "108808", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
-        ...gerarRegistros("GERSON FELIPE", "D-104", "107118", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
-        ...gerarRegistros("FELIPE MAURICIO", "E-105", "108806", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
-        ...gerarRegistros("MATEUS RIBEIRO", "F-106", "108771", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
+        // Conjuntos alternativos do PDF (com outras matrículas e nomes)
+        { local:"POÇO BURRO VELHO", mat:"106411", nome:"ALEF SEVERINO", turma:676, agenda:{5:"N",6:"N",7:"N",8:"N",9:"N",10:"F",11:"D",12:"D",13:"D",14:"D",15:"D",16:"F",17:"N",18:"N",19:"N",20:"N"} },
+        { local:"APOIO", mat:"108762", nome:"RODRIGO ADOLFO", turma:677, agenda:{5:"F",6:"N",7:"N",8:"N",9:"N",10:"N",11:"F",12:"D",13:"D",14:"D",15:"D",16:"D",17:"F",18:"N",19:"N",20:"N"} },
+        { local:"PIVOT B1", mat:"86373", nome:"DACIEL MARTINS", turma:678, agenda:{5:"D",6:"F",7:"N",8:"N",9:"N",10:"N",11:"N",12:"F",13:"D",14:"D",15:"D",16:"D",17:"D",18:"F",19:"N",20:"N"} },
+        { local:"PIVOT B2", mat:"61276", nome:"DJAIR GOMES", turma:679, agenda:{5:"D",6:"D",7:"F",8:"N",9:"N",10:"N",11:"N",12:"N",13:"F",14:"D",15:"D",16:"D",17:"D",18:"D",19:"F",20:"N"} },
+        { local:"OP. PASSAGEM MANGAIPE", mat:"105550", nome:"JOSE RICARDO", turma:680, agenda:{5:"D",6:"D",7:"D",8:"F",9:"N",10:"N",11:"N",12:"N",13:"N",14:"F",15:"D",16:"D",17:"D",18:"D",19:"D",20:"F"} },
+        { local:"FOLGUISTA", mat:"108605", nome:"DIOGO JOSE", turma:681, agenda:{5:"D",6:"D",7:"D",8:"D",9:"F",10:"N",11:"N",12:"N",13:"N",14:"N",15:"F",16:"D",17:"D",18:"D",19:"D",20:"D"} },
 
-        // Grupo 8
-        ...gerarRegistros("ALEF SEVERINO", "A-101", "106411", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
-        ...gerarRegistros("RODRIGO ADOLFO", "B-102", "108762", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
-        ...gerarRegistros("DACIEL MARTINS", "C-103", "86373", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
-        ...gerarRegistros("DJAIR GOMES", "D-104", "61276", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
-        ...gerarRegistros("JOSE RICARDO", "E-105", "105550", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
-        ...gerarRegistros("DIOGO JOSE", "F-106", "108605", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
-
-   // Grupo 9
-        ...gerarRegistros("ADRIANO DA SILVA", "B-102", "108573", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
-        ...gerarRegistros("REGINALDO TRAJANO", "C-103", "108760", "678", ["D","D","D","D","D","F","N","N","N","N","N","F","D","D","D"]),
-        ...gerarRegistros("ANDRE PEREIRA", "D-104", "108854", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
-        ...gerarRegistros("JOSE SEBASTIÃO", "E-105", "108746", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
-        ...gerarRegistros("JADSON NUNES", "F-106", "109084", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"]),
-
-        // Grupo 10
-        ...gerarRegistros("REGINALDO JOAQUIM", "A-101", "109089", "676", ["D","D","D","F","N","N","N","N","N","F","D","D","D","D","D"]),
-        ...gerarRegistros("EVANDRO RAIMUDO", "B-102", "109088", "677", ["D","D","D","D","F","N","N","N","N","N","F","D","D","D","D"]),
-        ...gerarRegistros("JOSE CARLOS", "D-104", "108420", "679", ["F","D","D","D","D","D","F","N","N","N","N","N","F","D","D"]),
-        ...gerarRegistros("OZIEL ROSA", "E-105", "109026", "680", ["N","F","D","D","D","D","D","F","N","N","N","N","N","F","D"]),
-        ...gerarRegistros("LUCAS GABRIEL", "F-106", "108750", "681", ["N","N","F","D","D","D","D","D","F","N","N","N","N","N","F"])
+        { local:"B. PRESSAO M. FEDERAL", mat:"108573", nome:"ADRIANO DA SILVA", turma:677, agenda:{5:"F",6:"N",7:"N",8:"N",9:"N",10:"N",11:"F",12:"D",13:"D",14:"D",15:"D",16:"D",17:"F",18:"N",19:"N",20:"N"} },
+        { local:"B. PRESSAO M. 27419", mat:"108760", nome:"REGINALDO TRAJANO", turma:678, agenda:{5:"D",6:"F",7:"N",8:"N",9:"N",10:"N",11:"N",12:"F",13:"D",14:"D",15:"D",16:"D",17:"D",18:"F",19:"N",20:"N"} },
+        { local:"B. PRESSAO M. 27419", mat:"108854", nome:"ANDRE PEREIRA", turma:679, agenda:{5:"D",6:"D",7:"F",8:"N",9:"N",10:"N",11:"N",12:"N",13:"F",14:"D",15:"D",16:"D",17:"D",18:"D",19:"F",20:"N"} },
+        { local:"OP. MANGAIPE DEDE", mat:"108746", nome:"JOSE SEBASTIÃO", turma:680, agenda:{5:"D",6:"D",7:"D",8:"F",9:"N",10:"N",11:"N",12:"N",13:"N",14:"F",15:"D",16:"D",17:"D",18:"D",19:"D",20:"F"} },
+        { local:"FOLGUISTA", mat:"109084", nome:"JADSON NUNES", turma:681, agenda:{5:"D",6:"D",7:"D",8:"D",9:"F",10:"N",11:"N",12:"N",13:"N",14:"N",15:"F",16:"D",17:"D",18:"D",19:"D",20:"D"} },
+        { local:"SOBRA", mat:"108781", nome:"RAUL FIGUEREDO", turma:681, agenda:{5:"D",6:"D",7:"D",8:"D",9:"F",10:"N",11:"N",12:"N",13:"N",14:"N",15:"F",16:"D",17:"D",18:"D",19:"D",20:"D"} },
       ];
 
-      // OS
-      const ordensServico = [
-        { numero: "545174", fazenda: "60 - ÁGUA BRANCA", operacao: "2228 - Montagem e Recolhimento M" },
-        { numero: "545175", fazenda: "60 - ÁGUA BRANCA", operacao: "3504 - Reboque de Implementos" },
-        { numero: "545176", fazenda: "60 - ÁGUA BRANCA", operacao: "2227 - Irrigação" },
-        { numero: "545177", fazenda: "60 - ÁGUA BRANCA", operacao: "2224 - Vigia" },
-        { numero: "545178", fazenda: "60 - ÁGUA BRANCA", operacao: "3620 - Transp. mater. diversos" },
-        { numero: "545179", fazenda: "78 - PASMADO", operacao: "2224 - Vigia" },
-        { numero: "545180", fazenda: "78 - PASMADO", operacao: "2228 - Montagem e Recolhimento M" },
-        { numero: "545181", fazenda: "78 - PASMADO", operacao: "3504 - Reboque de Implementos" },
-        { numero: "545182", fazenda: "78 - PASMADO", operacao: "2224 - Vigia" },
-        { numero: "545183", fazenda: "78 - PASMADO", operacao: "2227 - Irrigação" },
-        { numero: "545184", fazenda: "78 - PASMADO", operacao: "3620 - Transp. mater. diversos" },
-        { numero: "545185", fazenda: "77 - DO MEIO", operacao: "2224 - Vigia" },
-        { numero: "545186", fazenda: "77 - DO MEIO", operacao: "3620 - Transp. mater. diversos" },
-        { numero: "545187", fazenda: "67 - BURRO VELHO", operacao: "2228 - Montagem e Recolhimento M" },
-        { numero: "545188", fazenda: "67 - BURRO VELHO", operacao: "3504 - Reboque de Implementos" },
-        { numero: "545189", fazenda: "67 - BURRO VELHO", operacao: "2224 - Vigia" },
-        { numero: "545190", fazenda: "67 - BURRO VELHO", operacao: "2227 - Irrigação" },
-        { numero: "545191", fazenda: "67 - BURRO VELHO", operacao: "3620 - Transp. mater. diversos" },
-        { numero: "545192", fazenda: "CARRAPICHO", operacao: "2228 - Montagem e Recolhimento M" },
-        { numero: "545193", fazenda: "CARRAPICHO", operacao: "3504 - Reboque de Implementos" },
-        { numero: "545194", fazenda: "CARRAPICHO", operacao: "2224 - Vigia" },
-        { numero: "545195", fazenda: "CARRAPICHO", operacao: "2227 - Irrigação" }
-      ];
-
-      // Referências
-      const dataConsulta = document.getElementById('data-consulta');
-      const nomeConsulta = document.getElementById('nome-consulta');
-      const msgConsulta = document.getElementById('mensagem-consulta');
-      const tbodyConsulta = document.getElementById('tbody-consulta');
-      const toggleConsulta = document.getElementById('toggle-consulta');
-
-      const selectTurmaPersistente = document.getElementById('selectTurmaPersistente');
-      const dataTurmas = document.getElementById('data-turmas');
-      const msgTurmas = document.getElementById('mensagem-turmas');
-      const tbodyTurmas = document.getElementById('tbody-turmas');
-
-      const btnDia = document.getElementById('btnDia');
-      const btnNoite = document.getElementById('btnNoite');
-      const btnFolga = document.getElementById('btnFolga');
-
-      const opsContainer = document.getElementById('ops-container');
-      const msgOS = document.getElementById('mensagem-os');
-      const tbodyOS = document.getElementById('tbody-os');
-
-      const tabConsulta = document.getElementById('tab-consulta');
-      const tabTurmas = document.getElementById('tab-turmas');
-      const tabOS = document.getElementById('tab-os');
-      const panelConsulta = document.getElementById('panel-consulta');
-      const panelTurmas = document.getElementById('panel-turmas');
-      const panelOS = document.getElementById('panel-os');
-
-      // Tabs
-      function selecionarAba(alvo) {
-        const isConsulta = alvo === 'consulta';
-        const isTurmas = alvo === 'turmas';
-        tabConsulta.setAttribute('aria-selected', isConsulta ? 'true' : 'false');
-        tabTurmas.setAttribute('aria-selected', isTurmas ? 'true' : 'false');
-        tabOS.setAttribute('aria-selected', (!isConsulta && !isTurmas) ? 'true' : 'false');
-        panelConsulta.classList.toggle('active', isConsulta);
-        panelTurmas.classList.toggle('active', isTurmas);
-        panelOS.classList.toggle('active', (!isConsulta && !isTurmas));
-        (isConsulta ? tabConsulta : isTurmas ? tabTurmas : tabOS).focus();
+      function loadStorage(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); }catch(e){ return {}; } }
+      function saveStorage(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+      function presenceKey(dateStr, leaderKey){ return `${dateStr}::${leaderKey}`; }
+      function getPresenceMap(dateStr, leaderKey){ const s=loadStorage(); return s[presenceKey(dateStr, leaderKey)]||{}; }
+      function setPresence(dateStr, leaderKey, matricula, status){
+        const s = loadStorage();
+        const key = presenceKey(dateStr, leaderKey);
+        if(!s[key]) s[key] = {};
+        if(status) s[key][matricula] = status; else delete s[key][matricula];
+        saveStorage(s);
       }
-      tabConsulta.addEventListener('click', () => selecionarAba('consulta'));
-      tabTurmas.addEventListener('click', () => selecionarAba('turmas'));
-      tabOS.addEventListener('click', () => selecionarAba('os'));
 
-      // Helpers
-      function limparTabela(tbody) { tbody.innerHTML = ""; }
-      function mostrarMensagem(el, texto, tipo = "") { el.className = "msg " + (tipo || ""); el.textContent = texto || ""; }
+      const leaderToggle = document.getElementById("leaderToggle");
+      const turnoToggle = document.getElementById("turnoToggle");
+      const dateInput = document.getElementById("date");
+      const bodyEl = document.getElementById("body");
+      const listEl = document.getElementById("list");
+      const emptyEl = document.getElementById("empty");
+      const countEl = document.getElementById("count");
+      let leader = "luiz";
+      let turno = "D";
 
-      // Consulta por nome
-      function aplicarFiltroHorarioConsulta(registros) { return registros.filter(r => r.turno === horarioConsulta); }
-      function consultarTurno() {
-        limparTabela(tbodyConsulta);
-        mostrarMensagem(msgConsulta, "");
-        const data = dataConsulta.value;
-        const nome = nomeConsulta.value;
-        if (!data || !nome) { mostrarMensagem(msgConsulta, "Preencha a data e o nome antes de consultar.", "error"); return; }
-        let resultados = trabalhadores.filter(t => t.data === data && nomeCombina(nome, t.nome));
-        resultados = aplicarFiltroHorarioConsulta(resultados);
-        if (resultados.length > 0) {
-          const frag = document.createDocumentFragment();
-          resultados.forEach(t => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${t.nome}</td><td>${t.turma}</td><td>${t.mat}</td><td>${t.turno}</td>`;
-            frag.appendChild(tr);
+      function initDateToDeviceToday(){ dateInput.value = getLocalDateStringToday(); }
+
+      leaderToggle.addEventListener("click", (e)=>{
+        const btn = e.target.closest("button"); if(!btn) return;
+        leader = btn.dataset.leader;
+        [...leaderToggle.querySelectorAll("button")].forEach(b=>b.classList.toggle("active", b===btn));
+        render();
+      });
+
+      turnoToggle.addEventListener("click", (e)=>{
+        const btn = e.target.closest("button"); if(!btn) return;
+        turno = btn.dataset.turno;
+        [...turnoToggle.querySelectorAll("button")].forEach(b=>{ b.classList.toggle("active", b===btn); b.classList.remove("D","N","F"); });
+        btn.classList.add(turno);
+        render();
+      });
+
+      function teamsForLeader(key){ const allowed=new Set(LEADERS[key]); return DATA.filter(p=>allowed.has(p.turma)); }
+      function statusOnDate(pessoa, dateStr){
+        const d=dayFromDate(dateStr);
+        if(d==null||d<5||d>20) return null;
+        return pessoa.agenda[String(d)];
+      }
+
+      function render(){
+        const team = teamsForLeader(leader);
+        const date = dateInput.value || getLocalDateStringToday();
+        const presenceMap = getPresenceMap(date, leader);
+
+        const rows = team.map(p=>{
+          const st = statusOnDate(p, date);
+          return st ? {nome:p.nome, mat:p.mat, turma:p.turma, turno:st, func:p.local} : null;
+        }).filter(Boolean).filter(r=>r.turno===turno).sort((a,b)=>(a.turma-b.turma)||a.nome.localeCompare(b.nome));
+
+        bodyEl.innerHTML = "";
+        if (!rows.length){ listEl.style.display="none"; emptyEl.style.display="block"; }
+        else{
+          listEl.style.display="block"; emptyEl.style.display="none";
+          for (const r of rows){
+            const saved = presenceMap[r.mat];
+            const div = document.createElement("div");
+            div.className = "row";
+            div.innerHTML = `
+              <div>${r.nome}</div>
+              <div>${r.mat}</div>
+              <div>${r.turma}</div>
+              <div>${r.turno}</div>
+              <div>${r.func}</div>
+              <div class="presence">
+                <div class="pill" data-mat="${r.mat}">
+                  <button class="dot-btn ${saved==='present'?'green':''}" data-kind="present" title="Presente"></button>
+                  <button class="dot-btn ${saved==='absent'?'red':''}" data-kind="absent" title="Falta"></button>
+                  <button class="dot-btn ${saved==='loan'?'yellow':''}" data-kind="loan" title="Emprestado"></button>
+                </div>
+              </div>
+            `;
+            bodyEl.appendChild(div);
+          }
+          bodyEl.querySelectorAll(".pill").forEach(pill=>{
+            pill.addEventListener("click", (e)=>{
+              const btn = e.target.closest(".dot-btn"); if(!btn) return;
+              const mat = pill.getAttribute("data-mat");
+              const kind = btn.getAttribute("data-kind");
+              const isActive = btn.classList.contains(kind==='present'?'green':kind==='absent'?'red':'yellow');
+              pill.querySelectorAll(".dot-btn").forEach(b=>b.classList.remove("green","red","yellow"));
+              if (!isActive){
+                if(kind==='present') btn.classList.add("green");
+                if(kind==='absent') btn.classList.add("red");
+                if(kind==='loan') btn.classList.add("yellow");
+                setPresence(date, leader, mat, kind);
+              } else {
+                setPresence(date, leader, mat, null);
+              }
+              updateSummary(rows, date);
+            });
           });
-          tbodyConsulta.appendChild(frag);
-          mostrarMensagem(msgConsulta, `${resultados.length} registro(s) encontrado(s).`, "success");
-        } else { mostrarMensagem(msgConsulta, "Nenhum registro encontrado com os filtros informados.", "error"); }
-      }
-      function alternarHorarioConsulta(toggleEl) {
-        horarioConsulta = (horarioConsulta==="Dia") ? "Noite" : "Dia";
-        if (horarioConsulta==="Dia") { toggleEl.classList.remove("state-night"); toggleEl.classList.add("state-day"); toggleEl.setAttribute("aria-label","Horário atual: Dia. Clique para alternar para Noite."); }
-        else { toggleEl.classList.remove("state-day"); toggleEl.classList.add("state-night"); toggleEl.setAttribute("aria-label","Horário atual: Noite. Clique para alternar para Dia."); }
-        if (panelConsulta.classList.contains('active')) { if (tbodyConsulta.children.length>0) consultarTurno(); }
-      }
-      toggleConsulta.addEventListener('click', () => alternarHorarioConsulta(toggleConsulta));
-      toggleConsulta.addEventListener('keydown', (e) => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); alternarHorarioConsulta(toggleConsulta); } });
-
-      // Turmas
-      function obterTurmasUnicas() { const set = new Set(trabalhadores.map(t => t.turma)); return Array.from(set).sort((a,b)=>Number(a)-Number(b)); }
-      function popularSelectTurma() {
-        const turmas = obterTurmasUnicas();
-        selectTurmaPersistente.innerHTML = "";
-        turmas.forEach(t => { const opt = document.createElement('option'); opt.value=t; opt.textContent=t; selectTurmaPersistente.appendChild(opt); });
-        if (!turmaSelecionada) turmaSelecionada = selectTurmaPersistente.value || turmas[0] || null;
-        else if (turmas.includes(turmaSelecionada)) selectTurmaPersistente.value = turmaSelecionada;
-      }
-      function atualizarBotaoTurnoAtivo() {
-        [btnDia, btnNoite, btnFolga].forEach(b => b.classList.remove('active'));
-        if (turnoSelecionado === "Dia") btnDia.classList.add('active');
-        else if (turnoSelecionado === "Noite") btnNoite.classList.add('active');
-        else btnFolga.classList.add('active');
-      }
-      function renderizarTurmaSelecionada() {
-        if (!turmaSelecionada) { mostrarMensagem(msgTurmas, "Selecione uma turma.", "error"); return; }
-        const data = dataTurmas.value;
-        limparTabela(tbodyTurmas);
-        mostrarMensagem(msgTurmas, "");
-        const resultados = trabalhadores
-          .filter(t => t.data === data && t.turma === turmaSelecionada && t.turno === turnoSelecionado)
-          .sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-        if (resultados.length === 0) {
-          mostrarMensagem(msgTurmas, `Nenhum registro para Turma ${turmaSelecionada} no horário ${turnoSelecionado} em ${data}.`, "error");
-          return;
         }
-        const frag = document.createDocumentFragment();
-        const headerTr = document.createElement('tr'); headerTr.className='grupo-header';
-        const headerTd = document.createElement('td'); headerTd.colSpan=4; headerTd.textContent = `Turma ${turmaSelecionada} — ${turnoSelecionado} (${resultados.length})`;
-        headerTr.appendChild(headerTd); frag.appendChild(headerTr);
-        resultados.forEach(t => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${t.nome}</td><td>${t.turma}</td><td>${t.mat}</td><td>${t.turno}</td>`;
-          frag.appendChild(tr);
-        });
-        tbodyTurmas.appendChild(frag);
-        mostrarMensagem(msgTurmas, `Exibindo Turma ${turmaSelecionada} no horário ${turnoSelecionado}.`, "success");
-      }
-      selectTurmaPersistente.addEventListener('change', () => { turmaSelecionada = selectTurmaPersistente.value; renderizarTurmaSelecionada(); });
-      dataTurmas.addEventListener('change', () => { renderizarTurmaSelecionada(); });
-      btnDia.addEventListener('click', () => { turnoSelecionado = "Dia"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
-      btnNoite.addEventListener('click', () => { turnoSelecionado = "Noite"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
-      btnFolga.addEventListener('click', () => { turnoSelecionado = "Folga"; atualizarBotaoTurnoAtivo(); renderizarTurmaSelecionada(); });
-
-      // O.S
-      function obterOperacoesUnicas() {
-        const mapa = new Map();
-        ordensServico.forEach(os => {
-          const [cod, ...resto] = os.operacao.split(" - ");
-          const nome = resto.join(" - ");
-          if (!mapa.has(cod)) mapa.set(cod, { codigo: cod, nome: nome || os.operacao });
-        });
-        return Array.from(mapa.values()).sort((a,b)=>a.codigo.localeCompare(b.codigo));
-      }
-      function renderizarBotoesOperacoes() {
-        opsContainer.innerHTML = "";
-        const ops = obterOperacoesUnicas();
-        ops.forEach(op => {
-          const btn = document.createElement('button');
-          btn.className = 'op-btn';
-          btn.type = 'button';
-          btn.dataset.codigo = op.codigo;
-          btn.textContent = `${op.codigo} - ${op.nome}`;
-          btn.addEventListener('click', () => filtrarPorOperacao(op.codigo, btn));
-          opsContainer.appendChild(btn);
-        });
-      }
-      function marcarAtivo(botao) {
-        document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
-        if (botao) botao.classList.add('active');
-      }
-      function filtrarPorOperacao(codigo, botao) {
-        marcarAtivo(botao);
-        limparTabela(tbodyOS);
-        mostrarMensagem(msgOS, "");
-        const lista = ordensServico.filter(os => os.operacao.startsWith(codigo + " "));
-        if (lista.length === 0) {
-          mostrarMensagem(msgOS, `Nenhuma O.S para a operação ${codigo}.`, "error");
-          return;
-        }
-        const frag = document.createDocumentFragment();
-        lista.forEach(os => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${os.fazenda} — ${os.numero}</td><td>${os.numero}</td>`;
-          frag.appendChild(tr);
-        });
-        tbodyOS.appendChild(frag);
-        mostrarMensagem(msgOS, `Listadas ${lista.length} O.S para a operação ${codigo}.`, "success");
+        updateSummary(rows, date);
       }
 
-      // Inicialização segura após carregar DOM
-      function init() {
-        // Setar datas com a data do aparelho
-        dataConsulta.value = dataHojeStr;
-        dataTurmas.value = dataHojeStr;
-        // Turmas
-        popularSelectTurma();
-        atualizarBotaoTurnoAtivo();
-        renderizarTurmaSelecionada();
-        // O.S
-        renderizarBotoesOperacoes();
+      function updateSummary(rows, date){
+        const leaderLabel = leader === "luiz" ? "Luiz" : "Romero";
+        const dateLabel = new Date(date + "T12:00:00").toLocaleDateString("pt-BR");
+        const turnoLabel = turno === "D" ? "Dia" : (turno === "N" ? "Noite" : "Folga");
+
+        const map = getPresenceMap(date, leader);
+        const mats = rows.map(r=>r.mat);
+        const present = mats.filter(m=>map[m]==='present').length;
+        const absent  = mats.filter(m=>map[m]==='absent').length;
+        const loan    = mats.filter(m=>map[m]==='loan').length;
+
+        countEl.textContent = `${rows.length} registro(s) • ${dateLabel} • Líder: ${leaderLabel} • Turno: ${turnoLabel} • Presente: ${present} • Falta: ${absent} • Emprestado: ${loan}`;
       }
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-      } else {
-        init();
-      }
+
+      dateInput.addEventListener("change", render);
+
+      initDateToDeviceToday();
+      leaderToggle.querySelector('[data-leader="luiz"]').classList.add("active");
+      turnoToggle.querySelector('[data-turno="D"]').classList.add("active","D");
+      render();
     </script>
   </body>
   </html>
