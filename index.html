@@ -1,4 +1,6 @@
+# Código Completo — Escala 4x2 com Sistema de Lembretes
 
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -493,6 +495,8 @@ atualizarEscala();
 inputData.addEventListener("change", atualizarEscala);
 
 let lembretes = JSON.parse(localStorage.getItem("lembretes")) || [];
+
+// Os lembretes ficam salvos mesmo recarregando ou fechando a página
 
 function salvarLembretes(){
 localStorage.setItem("lembretes", JSON.stringify(lembretes));
