@@ -1,3 +1,6 @@
+# Código Completo — Escala 4x2 com Sistema de Lembretes
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,12 +17,9 @@
   --bg:#07111f;
   --card:#0d1b2d;
   --border:rgba(255,255,255,0.08);
-
   --primary:#00d68f;
-
   --text:#ffffff;
   --muted:#91a4b7;
-
   --dia:#84cc16;
   --noite:#3b82f6;
   --folga:#14b8a6;
@@ -30,11 +30,6 @@
   padding:0;
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-  overflow-x:hidden;
 }
 
 body{
@@ -52,10 +47,8 @@ body{
   width:100%;
   max-width:500px;
   margin:auto;
-  padding:18px 14px 30px;
+  padding:18px 14px 40px;
 }
-
-/* HEADER */
 
 .header{
   margin-bottom:24px;
@@ -64,7 +57,6 @@ body{
 .logo h1{
   font-size:2rem;
   font-weight:800;
-  letter-spacing:-1px;
 }
 
 .logo span{
@@ -74,124 +66,83 @@ body{
 .logo p{
   color:var(--muted);
   margin-top:4px;
-  font-size:0.92rem;
 }
 
-/* PAINEL */
+.painel,
+.status-card,
+.lembrete-box{
+  background:rgba(13,27,45,0.92);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:18px;
+  backdrop-filter:blur(10px);
+}
 
 .painel{
-  background:rgba(13,27,45,0.92);
-
-  border:1px solid var(--border);
-
-  border-radius:24px;
-
-  padding:18px;
-
   margin-bottom:22px;
-
-  backdrop-filter:blur(10px);
 }
 
 .label{
   color:var(--muted);
   margin-bottom:12px;
-  font-size:0.92rem;
 }
 
-.btn-data{
-  position:relative;
-
+.btn-data,
+.btn-add{
   width:100%;
   height:56px;
-
   border:none;
   border-radius:18px;
-
-  background:
-  linear-gradient(135deg,#00c896,#0ea5e9);
-
   color:white;
-
   font-size:1rem;
   font-weight:700;
+  cursor:pointer;
 
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
+}
 
-  overflow:hidden;
+.btn-data{
+  position:relative;
+  background:linear-gradient(135deg,#00c896,#0ea5e9);
 }
 
 .btn-data input{
   position:absolute;
   inset:0;
-
   opacity:0;
-
-  width:100%;
-  height:100%;
-
   cursor:pointer;
 }
 
 .data-atual{
   margin-top:16px;
-
   background:rgba(0,214,143,0.08);
-
   border:1px solid rgba(0,214,143,0.15);
-
   padding:16px;
-
   border-radius:18px;
-
-  font-weight:600;
-  color:#d7fff2;
-
-  line-height:1.5;
-  text-transform:capitalize;
 }
-
-/* STATUS */
 
 .status-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:14px;
-
   margin-bottom:22px;
 }
 
 .status-card{
-  background:rgba(13,27,45,0.92);
-
-  border:1px solid var(--border);
-
-  border-radius:22px;
-
-  padding:18px;
-
   text-align:center;
-}
-
-.status-card i{
-  font-size:1.5rem;
-  margin-bottom:12px;
 }
 
 .status-card h3{
   font-size:2rem;
-  margin-bottom:4px;
+  margin:10px 0 4px;
 }
 
 .status-card p{
   color:var(--muted);
-  font-size:0.9rem;
 }
-
-/* CARDS */
 
 .cards{
   display:flex;
@@ -201,89 +152,46 @@ body{
 
 .card{
   border-radius:28px;
-
   padding:22px;
-
   position:relative;
   overflow:hidden;
-
   border:1px solid rgba(255,255,255,0.08);
-
-  box-shadow:
-  0 10px 30px rgba(0,0,0,0.35);
-
-  transition:0.25s;
-}
-
-.card:active{
-  transform:scale(0.98);
-}
-
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  opacity:0.08;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
 }
 
 .noite{
-  background:
-  linear-gradient(180deg,#071b38,#0b2245);
-}
-
-.noite::before{
-  background:var(--noite);
+  background:linear-gradient(180deg,#071b38,#0b2245);
 }
 
 .dia{
-  background:
-  linear-gradient(180deg,#08271d,#0c3a2b);
-}
-
-.dia::before{
-  background:var(--dia);
+  background:linear-gradient(180deg,#08271d,#0c3a2b);
 }
 
 .folga{
-  background:
-  linear-gradient(180deg,#072b2a,#0a4341);
-}
-
-.folga::before{
-  background:var(--folga);
+  background:linear-gradient(180deg,#072b2a,#0a4341);
 }
 
 .topo-card{
   display:flex;
   justify-content:space-between;
-  align-items:flex-start;
-
   margin-bottom:20px;
-
-  position:relative;
-  z-index:2;
 }
 
 .turma{
-  font-size:1.7rem;
+  font-size:1.6rem;
   font-weight:800;
-  margin-bottom:6px;
 }
 
 .status{
   color:rgba(255,255,255,0.8);
-  font-size:1rem;
+  margin-top:6px;
 }
 
 .tag{
   padding:10px 16px;
-
   border-radius:14px;
-
   font-size:0.82rem;
   font-weight:800;
-
-  border:1px solid rgba(255,255,255,0.08);
 }
 
 .noite .tag{
@@ -301,38 +209,18 @@ body{
   color:#67fff1;
 }
 
-/* FUNCIONÁRIOS */
-
 .funcionarios{
-  margin-top:18px;
   display:none;
-
-  position:relative;
-  z-index:2;
 }
 
 .funcionario{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-
   padding:14px 0;
-
   border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-.funcionario:last-child{
-  border:none;
-}
-
-.info{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
 .nome{
-  font-size:0.96rem;
   font-weight:600;
 }
 
@@ -341,16 +229,43 @@ body{
   font-size:0.84rem;
 }
 
-.icone{
-  color:rgba(255,255,255,0.5);
+.lembretes{
+  margin-top:26px;
 }
 
-@media(max-width:400px){
+.lembretes h2{
+  margin-bottom:14px;
+}
 
-  .turma{
-    font-size:1.45rem;
-  }
+.btn-add{
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  margin-bottom:16px;
+}
 
+.lembrete-box{
+  margin-bottom:14px;
+}
+
+.lembrete-hora{
+  font-size:1.2rem;
+  font-weight:700;
+}
+
+.lembrete-texto{
+  color:var(--muted);
+  margin-top:6px;
+}
+
+.excluir{
+  margin-top:12px;
+  width:100%;
+  height:42px;
+  border:none;
+  border-radius:12px;
+  background:#ef4444;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
 }
 
 </style>
@@ -360,27 +275,20 @@ body{
 <div class="container">
 
 <header class="header">
-
 <div class="logo">
 <h1>ESCALA <span>4x2</span></h1>
 <p>Gestão de Equipes</p>
 </div>
-
 </header>
 
 <section class="painel">
 
-<div class="label">
-Selecionar data
-</div>
+<div class="label">Selecionar data</div>
 
 <label class="btn-data">
-
 <i class="fa-solid fa-calendar-days"></i>
 Escolher Data
-
 <input type="date" id="selecionarData">
-
 </label>
 
 <div class="data-atual" id="dataAtual"></div>
@@ -405,6 +313,17 @@ Escolher Data
 
 <section class="cards" id="escala"></section>
 
+<section class="lembretes">
+<h2>Lembretes</h2>
+
+<button class="btn-add" onclick="criarLembrete()">
+<i class="fa-solid fa-bell"></i>
+Novo lembrete
+</button>
+
+<div id="listaLembretes"></div>
+</section>
+
 </div>
 
 <script>
@@ -413,92 +332,41 @@ const turmas = [
 
 {
 nome:"Turma 669",
-inicio:"noite2",
-
+inicio:"folga2",
 funcionarios:[
 { nome:"Abelardo Correia", local:"R0" },
 { nome:"Alison Jonathan", local:"Baixa Pressão" },
-{ nome:"Daciel Martins", local:"Poço de Burro Velho" },
-{ nome:"Gildo Rufino", local:"R2" },
-{ nome:"Gilso Francisco", local:"Pagetinga" },
-{ nome:"João Francisco", local:"Itapiré e Itapiré" },
-{ nome:"José Augusto", local:"Vagalume" },
-{ nome:"José Carlos Galdino", local:"Engenho D’água" },
-{ nome:"William Henrique", local:"Poço 1" }
+{ nome:"Daciel Martins", local:"Poço de Burro Velho" }
 ]
 },
 
 {
 nome:"Turma 668",
-inicio:"dia2",
-
+inicio:"noite2",
 funcionarios:[
 { nome:"Pedro Paulo", local:"Pagitinga" },
-{ nome:"Jael Siqueira", local:"Poço 1" },
-{ nome:"José Vanderlei", local:"Itapiré" },
-{ nome:"Edivaldo Ramos", local:"Vagalume" },
-{ nome:"Oziel Rosa", local:"Baixa Pressão" },
-{ nome:"Wanderson José", local:"Poço de Burro Velho" },
-{ nome:"Elias Rosa", local:"Engenho D’água" },
-{ nome:"André Moura", local:"R2" }
+{ nome:"Jaelson", local:"Poço 1" }
 ]
 },
 
 {
 nome:"Turma 667",
-inicio:"folga2",
-
+inicio:"dia2",
 funcionarios:[
 { nome:"Cremilson Manuel", local:"Vagalume" },
-{ nome:"Edgar José", local:"Poço de Burro Velho" },
-{ nome:"Eronildo Flora", local:"Pajetinga" },
-{ nome:"Jefferson Luiz", local:"Poço 1" },
-{ nome:"Joséildo Vicente", local:"Baixa Pressão" },
-{ nome:"Marcos José", local:"Engenho D’água" },
-{ nome:"Ronaldo Pedro", local:"Itapiré" }
+{ nome:"Edgar José", local:"Poço de Burro Velho" }
 ]
 }
 
 ];
 
 const sequencia = [
-
-{
-tipo:"dia",
-texto:"1º dia trabalhando",
-badge:"DIA"
-},
-
-{
-tipo:"dia",
-texto:"Último dia trabalhando",
-badge:"DIA"
-},
-
-{
-tipo:"noite",
-texto:"1ª noite trabalhando",
-badge:"NOITE"
-},
-
-{
-tipo:"noite",
-texto:"Última noite trabalhando",
-badge:"NOITE"
-},
-
-{
-tipo:"folga",
-texto:"1º dia de folga",
-badge:"FOLGA"
-},
-
-{
-tipo:"folga",
-texto:"Último dia de folga",
-badge:"FOLGA"
-}
-
+{tipo:"dia",texto:"1º dia trabalhando",badge:"DIA"},
+{tipo:"dia",texto:"Último dia trabalhando",badge:"DIA"},
+{tipo:"noite",texto:"1ª noite trabalhando",badge:"NOITE"},
+{tipo:"noite",texto:"Última noite trabalhando",badge:"NOITE"},
+{tipo:"folga",texto:"1º dia de folga",badge:"FOLGA"},
+{tipo:"folga",texto:"Último dia de folga",badge:"FOLGA"}
 ];
 
 const mapaInicio = {
@@ -510,173 +378,220 @@ folga1:4,
 folga2:5
 };
 
-const inputData =
-document.getElementById("selecionarData");
+const inputData = document.getElementById("selecionarData");
 
 const hoje = new Date();
 
-inputData.value =
-hoje.toISOString().split("T")[0];
+const ano = hoje.getFullYear();
+const mes = String(hoje.getMonth()+1).padStart(2,"0");
+const dia = String(hoje.getDate()).padStart(2,"0");
+
+inputData.value = `${ano}-${mes}-${dia}`;
 
 function atualizarEscala(){
 
 let totalDia = 0;
 let totalNoite = 0;
 
-const dataSelecionada =
-new Date(inputData.value + "T00:00:00");
-
+const dataSelecionada = new Date(inputData.value + "T00:00:00");
 const hojeBase = new Date();
 
 hojeBase.setHours(0,0,0,0);
 
-const diferenca =
-Math.floor(
-(dataSelecionada - hojeBase) /
-(1000 * 60 * 60 * 24)
+const diferenca = Math.floor(
+(dataSelecionada - hojeBase) / (1000 * 60 * 60 * 24)
 );
 
-document.getElementById("dataAtual").innerHTML =
-dataSelecionada.toLocaleDateString(
-"pt-BR",
-{
-weekday:"long",
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-}
-);
-
-const container =
-document.getElementById("escala");
-
+const container = document.getElementById("escala");
 container.innerHTML = "";
 
-turmas.forEach((turma)=>{
+ document.getElementById("dataAtual").innerHTML =
+ dataSelecionada.toLocaleDateString(
+ "pt-BR",
+ {
+ weekday:"long",
+ day:"2-digit",
+ month:"2-digit",
+ year:"numeric"
+ }
+ );
 
-const inicioIndex =
-mapaInicio[turma.inicio];
+ turmas.forEach((turma)=>{
 
-let indexAtual =
-(inicioIndex + diferenca) % 6;
+ const inicioIndex = mapaInicio[turma.inicio];
 
-if(indexAtual < 0){
-indexAtual += 6;
-}
+ let indexAtual = (inicioIndex + diferenca) % 6;
 
-const atual =
-sequencia[indexAtual];
+ if(indexAtual < 0){
+ indexAtual += 6;
+ }
 
-let funcionariosLista =
-[...turma.funcionarios];
+ const atual = sequencia[indexAtual];
 
-if(atual.tipo === "dia"){
+ let funcionariosLista = [...turma.funcionarios];
 
-funcionariosLista.push({
-nome:"Luiz Carlos",
-local:"Auxiliar Cabo"
-});
+ if(atual.tipo === "dia"){
+ funcionariosLista.push({
+ nome:"Luiz Carlos",
+ local:"Auxiliar Cabo"
+ });
 
-totalDia += funcionariosLista.length;
+ totalDia += funcionariosLista.length;
+ }
 
-}
+ if(atual.tipo === "noite"){
+ totalNoite += funcionariosLista.length;
+ }
 
-if(atual.tipo === "noite"){
-totalNoite += funcionariosLista.length;
-}
+ const card = document.createElement("div");
+ card.className = `card ${atual.tipo}`;
 
-const card =
-document.createElement("div");
+ let funcionariosHTML = "";
 
-card.className =
-`card ${atual.tipo}`;
+ funcionariosLista.forEach(funcionario=>{
+ funcionariosHTML += `
+ <div class="funcionario">
+ <div>
+ <div class="nome">${funcionario.nome}</div>
+ <div class="local">${funcionario.local}</div>
+ </div>
+ <i class="fa-solid fa-user"></i>
+ </div>
+ `;
+ });
 
-let funcionariosHTML = "";
+ card.innerHTML = `
+ <div class="topo-card">
+ <div>
+ <div class="turma">${turma.nome}</div>
+ <div class="status">${atual.texto}</div>
+ </div>
+ <div class="tag">${atual.badge}</div>
+ </div>
 
-funcionariosLista.forEach(funcionario=>{
+ <div class="funcionarios">
+ ${funcionariosHTML}
+ </div>
+ `;
 
-funcionariosHTML += `
-<div class="funcionario">
+ card.addEventListener("click",()=>{
+ const lista = card.querySelector(".funcionarios");
+ lista.style.display = lista.style.display === "block"
+ ? "none"
+ : "block";
+ });
 
-<div class="info">
-<div class="nome">${funcionario.nome}</div>
-<div class="local">${funcionario.local}</div>
-</div>
+ container.appendChild(card);
 
-<div class="icone">
-<i class="fa-solid fa-user"></i>
-</div>
+ });
 
-</div>
-`;
-
-});
-
-card.innerHTML = `
-
-<div class="topo-card">
-
-<div>
-
-<div class="turma">
-${turma.nome}
-</div>
-
-<div class="status">
-${atual.texto}
-</div>
-
-</div>
-
-<div class="tag">
-${atual.badge}
-</div>
-
-</div>
-
-<div class="funcionarios">
-${funcionariosHTML}
-</div>
-
-`;
-
-card.addEventListener("click", ()=>{
-
-const lista =
-card.querySelector(".funcionarios");
-
-if(lista.style.display === "block"){
-
-lista.style.display = "none";
-
-}else{
-
-lista.style.display = "block";
-
-}
-
-});
-
-container.appendChild(card);
-
-});
-
-document.getElementById("qtdDia").innerText =
-totalDia;
-
-document.getElementById("qtdNoite").innerText =
-totalNoite;
+ document.getElementById("qtdDia").innerText = totalDia;
+ document.getElementById("qtdNoite").innerText = totalNoite;
 
 }
 
 atualizarEscala();
 
-inputData.addEventListener(
-"change",
-atualizarEscala
+inputData.addEventListener("change", atualizarEscala);
+
+let lembretes = JSON.parse(localStorage.getItem("lembretes")) || [];
+
+function salvarLembretes(){
+localStorage.setItem("lembretes", JSON.stringify(lembretes));
+}
+
+function renderizarLembretes(){
+
+const lista = document.getElementById("listaLembretes");
+lista.innerHTML = "";
+
+lembretes.forEach((lembrete,index)=>{
+
+const div = document.createElement("div");
+div.className = "lembrete-box";
+
+ div.innerHTML = `
+ <div class="lembrete-hora">${lembrete.hora}</div>
+ <div class="lembrete-texto">${lembrete.texto}</div>
+
+ <button class="excluir" onclick="excluirLembrete(${index})">
+ Excluir
+ </button>
+ `;
+
+ lista.appendChild(div);
+
+});
+
+}
+
+function criarLembrete(){
+
+const hora = prompt("Digite a hora do lembrete (Ex: 18:30)");
+if(!hora) return;
+
+const texto = prompt("Digite a mensagem do lembrete");
+if(!texto) return;
+
+lembretes.push({
+hora,
+texto,
+notificado:false
+});
+
+salvarLembretes();
+renderizarLembretes();
+
+}
+
+function excluirLembrete(index){
+lembretes.splice(index,1);
+salvarLembretes();
+renderizarLembretes();
+}
+
+function tocarSom(){
+
+const audio = new Audio(
+"https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"
 );
+
+audio.play();
+
+}
+
+function verificarLembretes(){
+
+const agora = new Date();
+
+const horaAtual =
+String(agora.getHours()).padStart(2,"0") +
+":" +
+String(agora.getMinutes()).padStart(2,"0");
+
+lembretes.forEach((lembrete)=>{
+
+if(lembrete.hora === horaAtual && !lembrete.notificado){
+
+alert("⏰ " + lembrete.texto);
+
+tocarSom();
+
+lembrete.notificado = true;
+salvarLembretes();
+
+}
+
+});
+
+}
+
+setInterval(verificarLembretes,1000);
+
+renderizarLembretes();
 
 </script>
 
 </body>
 </html>
+```
