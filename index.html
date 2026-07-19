@@ -273,128 +273,101 @@
             opacity: 0.9;
         }
 
-        /* Barra superior */
+        /* ===== BARRA SUPERIOR - FIXA EM LINHA ===== */
         .top-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 10;
-            padding: calc(16px + env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 10px max(20px, env(safe-area-inset-left));
+            padding: calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .top-bar-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
+            flex-wrap: nowrap; /* IMPEDE QUEBRAR PARA LINHA DE BAIXO */
+            min-width: 0;
+            width: 100%;
         }
 
+        /* LOGO - encolhe em telas pequenas */
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             background: rgba(245,245,247,0.85);
             backdrop-filter: blur(10px);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 18px;
             border: 1px solid rgba(0,0,0,0.06);
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            flex-shrink: 1;
             min-width: 0;
-            flex-shrink: 0;
+            overflow: hidden;
         }
 
         .brand-logo .logo-icon {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             color: #FF6B35;
             flex-shrink: 0;
         }
 
         .brand-logo span {
             color: #1a1a2e;
-            font-size: 12px;
+            font-size: clamp(10px, 2.5vw, 13px);
             font-weight: 600;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .share-btn {
-            background: rgba(245,245,247,0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.06);
-            color: #1a1a2e;
-            width: 38px;
-            height: 38px;
-            min-width: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-        }
-
-        .share-btn:hover {
-            background: rgba(255,107,53,0.08);
-            border-color: rgba(255,107,53,0.2);
-            transform: scale(1.05);
-        }
-
-        .share-btn:active {
-            transform: scale(0.95);
-        }
-
-        .share-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: #1a1a2e;
-        }
-
-        /* Cronômetro */
+        /* CRONÔMETRO - encolhe em telas pequenas */
         .promo-timer {
             background: rgba(255,107,53,0.1);
             backdrop-filter: blur(10px);
-            padding: 8px 14px;
-            border-radius: 20px;
+            padding: 5px 10px;
+            border-radius: 18px;
             color: #FF6B35;
-            font-size: 11px;
+            font-size: clamp(9px, 2.2vw, 12px);
             font-weight: 500;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             border: 1px solid rgba(255,107,53,0.25);
             box-shadow: 0 2px 12px rgba(255,107,53,0.08);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             white-space: nowrap;
-            flex-shrink: 0;
+            flex-shrink: 1;
+            min-width: 0;
             overflow: hidden;
         }
 
         .promo-timer .timer-icon {
-            width: 14px;
-            height: 14px;
+            width: 13px;
+            height: 13px;
             flex-shrink: 0;
         }
 
         .promo-timer .timer-text {
             font-weight: 400;
             opacity: 0.9;
+            font-size: clamp(7px, 1.8vw, 10px);
         }
 
         .promo-timer .timer-numbers {
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-variant-numeric: tabular-nums;
             font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size: clamp(8px, 2vw, 12px);
         }
 
         .promo-timer.expiring {
@@ -409,7 +382,46 @@
             50% { transform: scale(1.03); }
         }
 
-        /* Caixa de produto - MAIS TRANSPARENTE E COMPACTA, mais próxima da navbar */
+        /* BOTÃO COMPARTILHAR - tamanho fixo pequeno */
+        .share-btn {
+            background: rgba(245,245,247,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.06);
+            color: #1a1a2e;
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 0;
+        }
+
+        .share-btn:hover {
+            background: rgba(255,107,53,0.08);
+            border-color: rgba(255,107,53,0.2);
+            transform: scale(1.05);
+        }
+
+        .share-btn:active {
+            transform: scale(0.95);
+        }
+
+        .share-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: #1a1a2e;
+            flex-shrink: 0;
+        }
+
+        /* ===== FIM BARRA SUPERIOR ===== */
+
+        /* Caixa de produto */
         .product-info-box {
             position: absolute;
             bottom: calc(69px + env(safe-area-inset-bottom));
@@ -790,11 +802,20 @@
             .card-info { padding: 10px; }
             .card-name { font-size: 12px; }
             .card-price-new { font-size: 17px; }
-            .promo-timer { font-size: 10px; padding: 6px 10px; }
-            .top-bar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); gap: 8px; }
             .product-info-box { bottom: calc(63px + env(safe-area-inset-bottom)); padding: 6px 9px; }
             .product-name { font-size: 15px; }
             .price-new { font-size: 20px; }
+            /* Ajuste extra para telas muito pequenas */
+            .top-bar { padding: calc(8px + env(safe-area-inset-top)) 8px 4px 8px; gap: 4px; }
+            .top-bar-row { gap: 4px; }
+            .brand-logo { padding: 4px 8px; border-radius: 14px; }
+            .brand-logo .logo-icon { width: 14px; height: 14px; }
+            .brand-logo span { font-size: 9px; }
+            .promo-timer { padding: 4px 6px; border-radius: 14px; gap: 3px; }
+            .promo-timer .timer-icon { width: 11px; height: 11px; }
+            .promo-timer .timer-numbers { font-size: 8px; }
+            .share-btn { width: 30px; height: 30px; min-width: 30px; }
+            .share-btn svg { width: 14px; height: 14px; }
         }
 
         @media (max-width: 380px) {
@@ -805,16 +826,22 @@
             .products-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
             .card-name { font-size: 11px; }
             .card-price-new { font-size: 15px; }
-            .promo-timer { font-size: 9px; padding: 5px 8px; }
-            .promo-timer .timer-text { display: none; }
-            .top-bar { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); gap: 6px; }
-            .brand-logo { padding: 6px 12px; }
-            .brand-logo span { font-size: 10px; }
-            .share-btn { width: 32px; height: 32px; min-width: 32px; }
             .product-info-box { bottom: calc(57px + env(safe-area-inset-bottom)); padding: 6px 8px; border-radius: 11px; }
             .product-name { font-size: 14px; }
             .price-new { font-size: 19px; }
             .btn-shopee { padding: 8px; font-size: 11px; }
+            /* Ajuste extra para telas muito pequenas */
+            .top-bar { padding: calc(6px + env(safe-area-inset-top)) 4px 2px 4px; gap: 2px; }
+            .top-bar-row { gap: 2px; }
+            .brand-logo { padding: 3px 6px; border-radius: 12px; }
+            .brand-logo .logo-icon { width: 12px; height: 12px; }
+            .brand-logo span { font-size: 7px; }
+            .promo-timer { padding: 3px 4px; border-radius: 12px; gap: 2px; }
+            .promo-timer .timer-icon { width: 9px; height: 9px; }
+            .promo-timer .timer-text { display: none; }
+            .promo-timer .timer-numbers { font-size: 7px; }
+            .share-btn { width: 26px; height: 26px; min-width: 26px; }
+            .share-btn svg { width: 12px; height: 12px; }
         }
 
         @media (max-width: 400px) {
@@ -824,7 +851,7 @@
 
         @media (max-height: 600px) {
             .product-info-box { bottom: calc(53px + env(safe-area-inset-bottom)); }
-            .top-bar { gap: 6px; }
+            .top-bar { gap: 4px; }
         }
     </style>
 </head>
@@ -853,8 +880,6 @@
             </button>
         </div>
     </div>
-
-
 
     <!-- Página de Vídeos -->
     <div class="page-videos" id="pageVideos">
