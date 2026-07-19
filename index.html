@@ -408,93 +408,93 @@
             50% { transform: scale(1.03); }
         }
 
-        /* Caixa de produto */
+        /* Caixa de produto - MAIS TRANSPARENTE E COMPACTA, mais próxima da navbar */
         .product-info-box {
             position: absolute;
-            bottom: calc(96px + env(safe-area-inset-bottom));
+            bottom: calc(64px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 14px;
-            padding: 10px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            width: min(240px, calc(100vw - 32px));
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 12px;
+            padding: 7px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            width: min(210px, calc(100vw - 32px));
         }
 
         .product-tag {
             display: inline-block;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 8px;
+            padding: 2px 7px;
+            border-radius: 9px;
+            font-size: 7px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 6px;
-            background: rgba(66, 133, 244, 0.12);
-            color: #4285F4;
-            border: 1px solid rgba(66, 133, 244, 0.2);
+            margin-bottom: 4px;
+            background: rgba(66, 133, 244, 0.2);
+            color: #1a56db;
+            border: 1px solid rgba(66, 133, 244, 0.3);
         }
 
         .product-name {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
             letter-spacing: -0.3px;
             color: #1a1a2e;
-            line-height: 1.2;
+            line-height: 1.15;
         }
 
         .product-desc {
-            font-size: 9px;
-            color: #888;
-            margin-bottom: 8px;
+            font-size: 8px;
+            color: #666;
+            margin-bottom: 5px;
             font-weight: 400;
             letter-spacing: 0.1px;
-            line-height: 1.3;
+            line-height: 1.25;
         }
 
         .price-row {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 5px;
+            margin-bottom: 5px;
             flex-wrap: wrap;
         }
 
         .price-old {
-            font-size: 10px;
-            color: #bbb;
+            font-size: 9px;
+            color: #999;
             text-decoration: line-through;
             font-weight: 400;
         }
 
         .price-new {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #1a1a2e;
         }
 
         .price-off {
-            background: rgba(52, 211, 153, 0.15);
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 9px;
+            background: rgba(52, 211, 153, 0.2);
+            padding: 2px 5px;
+            border-radius: 7px;
+            font-size: 8px;
             font-weight: 600;
             color: #059669;
-            border: 1px solid rgba(52, 211, 153, 0.25);
+            border: 1px solid rgba(52, 211, 153, 0.3);
         }
 
         .btn-shopee {
             width: 100%;
-            padding: 9px;
+            padding: 7px;
             border: none;
-            border-radius: 10px;
-            font-size: 11px;
+            border-radius: 9px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
             letter-spacing: 0.2px;
@@ -506,14 +506,14 @@
             gap: 5px;
             text-decoration: none;
             font-family: 'Poppins', sans-serif;
-            box-shadow: 0 3px 10px rgba(255,107,53,0.2);
+            box-shadow: 0 3px 10px rgba(255,107,53,0.3);
             transition: all 0.2s ease;
         }
 
         .btn-shopee:hover {
             background: #E85D2C;
             transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.4);
         }
 
         .btn-shopee:active {
@@ -522,8 +522,8 @@
         }
 
         .btn-shopee svg {
-            width: 13px;
-            height: 13px;
+            width: 12px;
+            height: 12px;
             flex-shrink: 0;
         }
 
@@ -783,9 +783,9 @@
             .card-price-new { font-size: 17px; }
             .promo-timer { font-size: 10px; padding: 6px 10px; }
             .top-bar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); gap: 8px; }
-            .product-info-box { bottom: calc(88px + env(safe-area-inset-bottom)); padding: 8px 10px; }
-            .product-name { font-size: 15px; }
-            .price-new { font-size: 20px; }
+            .product-info-box { bottom: calc(58px + env(safe-area-inset-bottom)); padding: 6px 9px; }
+            .product-name { font-size: 13px; }
+            .price-new { font-size: 17px; }
         }
 
         @media (max-width: 380px) {
@@ -801,10 +801,10 @@
             .brand-logo { padding: 6px 12px; }
             .brand-logo span { font-size: 10px; }
             .share-btn { width: 32px; height: 32px; min-width: 32px; }
-            .product-info-box { bottom: calc(80px + env(safe-area-inset-bottom)); padding: 7px 9px; border-radius: 12px; }
-            .product-name { font-size: 14px; }
-            .price-new { font-size: 18px; }
-            .btn-shopee { padding: 8px; font-size: 10px; }
+            .product-info-box { bottom: calc(52px + env(safe-area-inset-bottom)); padding: 6px 8px; border-radius: 11px; }
+            .product-name { font-size: 12px; }
+            .price-new { font-size: 16px; }
+            .btn-shopee { padding: 7px; font-size: 9px; }
         }
 
         @media (max-width: 400px) {
@@ -813,7 +813,7 @@
         }
 
         @media (max-height: 600px) {
-            .product-info-box { bottom: calc(76px + env(safe-area-inset-bottom)); }
+            .product-info-box { bottom: calc(48px + env(safe-area-inset-bottom)); }
             .top-bar { gap: 6px; }
         }
     </style>
@@ -901,9 +901,6 @@
     </nav>
 
     <script>
-        // ============================================
-        // 🎬 CONFIGURAÇÃO DOS VÍDEOS
-        // ============================================
         const videoProducts = [
             { id: 1, video: 'imagen/Hands_holding_denim_skirt_202607120028.mp4', name: 'Saia Jeans', desc: '', priceOld: 'R$299', priceNew: 'R$149', discount: '50% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=saia+jeans' },
             { id: 2, video: 'imagen/Hands_holding_black_gloves_showi…_202607111613.mp4', name: 'Luvas Pretas', desc: '', priceOld: 'R$599', priceNew: 'R$399', discount: '33% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=luvas+pretas' },
@@ -927,9 +924,6 @@
             { id: 20, video: 'videos/produto20.mp4', name: 'Projetor Portátil', desc: '1080p · Conexão WiFi · Tela até 120"', priceOld: 'R$699', priceNew: 'R$449', discount: '36% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=projetor+portatil' }
         ];
 
-        // ============================================
-        // 🛍️ CONFIGURAÇÃO DA LOJA
-        // ============================================
         const storeProducts = [
             { id: 1, image: '', name: 'Vestido Floral', desc: 'Tecido leve · Estampa exclusiva · Verão 2026', priceOld: 'R$199', priceNew: 'R$99', discount: '50% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=vestido+floral' },
             { id: 2, image: '', name: 'Bolsa Couro Sintético', desc: 'Alça ajustável · 3 compartimentos · Premium', priceOld: 'R$259', priceNew: 'R$149', discount: '42% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=bolsa+couro+sintetico' },
@@ -947,9 +941,6 @@
 
         let currentProductIndex = 0;
 
-        // ============================================
-        // CRONÔMETRO DE 7 DIAS
-        // ============================================
         function getNextSundayMidnight() {
             const now = new Date();
             const dayOfWeek = now.getDay();
@@ -982,9 +973,6 @@
         updateTimer();
         setInterval(updateTimer, 1000);
 
-        // ============================================
-        // GERAR PÁGINA DE VÍDEOS (SEM MUTED)
-        // ============================================
         const reelsContainer = document.getElementById('reelsContainer');
         const scrollIndicator = document.getElementById('scrollIndicator');
         reelsContainer.innerHTML = '';
@@ -1024,9 +1012,6 @@
             scrollIndicator.appendChild(dot);
         });
 
-        // ============================================
-        // GERAR PÁGINA DA LOJA
-        // ============================================
         const productsGrid = document.getElementById('productsGrid');
         productsGrid.innerHTML = '';
         storeProducts.forEach(product => {
@@ -1055,9 +1040,6 @@
             productsGrid.appendChild(card);
         });
 
-        // ============================================
-        // CONTROLE DE VÍDEOS (COM SOM)
-        // ============================================
         const allVideos = document.querySelectorAll('.video-background');
         const allReelItems = document.querySelectorAll('.reel-item');
         const allDots = document.querySelectorAll('.scroll-dot');
@@ -1087,9 +1069,6 @@
 
         allReelItems.forEach(item => observer.observe(item));
 
-        // ============================================
-        // NAVEGAÇÃO ENTRE ABAS
-        // ============================================
         function switchTab(tab, element) {
             const navItems = document.querySelectorAll('.nav-item');
             const pageVideos = document.getElementById('pageVideos');
@@ -1114,9 +1093,6 @@
             }
         }
 
-        // ============================================
-        // COMPARTILHAR
-        // ============================================
         function getCurrentShopeeLink() {
             const cr = allReelItems[currentProductIndex];
             return cr ? cr.dataset.shopeeLink : videoProducts[0].shopeeLink;
