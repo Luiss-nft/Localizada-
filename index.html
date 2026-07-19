@@ -293,6 +293,14 @@
             gap: 8px;
         }
 
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+
         .brand-logo {
             display: flex;
             align-items: center;
@@ -304,6 +312,7 @@
             border: 1px solid rgba(0,0,0,0.06);
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             min-width: 0;
+            flex-shrink: 0;
         }
 
         .brand-logo .logo-icon {
@@ -373,8 +382,7 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
-            align-self: flex-start;
-            max-width: 100%;
+            flex-shrink: 0;
             overflow: hidden;
         }
 
@@ -403,6 +411,23 @@
             animation: pulse-expiring 1s ease-in-out infinite;
         }
 
+        .top-frete-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #059669;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 12px rgba(5,150,105,0.25);
+            align-self: flex-start;
+            white-space: nowrap;
+        }
+
         @keyframes pulse-expiring {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.03); }
@@ -411,7 +436,7 @@
         /* Caixa de produto - MAIS TRANSPARENTE E COMPACTA, mais próxima da navbar */
         .product-info-box {
             position: absolute;
-            bottom: calc(64px + env(safe-area-inset-bottom));
+            bottom: calc(69px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
@@ -422,34 +447,44 @@
             padding: 7px 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-            width: min(210px, calc(100vw - 32px));
+            width: min(225px, calc(100vw - 32px));
+        }
+
+        .product-name-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .product-tag {
             display: inline-block;
-            padding: 2px 7px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            padding: 3px 8px;
             border-radius: 9px;
-            font-size: 7px;
+            font-size: 8px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-top: 2px;
             background: rgba(66, 133, 244, 0.2);
             color: #1a56db;
             border: 1px solid rgba(66, 133, 244, 0.3);
         }
 
         .product-name {
-            font-size: 14px;
+            flex: 1;
+            min-width: 0;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 1px;
             letter-spacing: -0.3px;
             color: #1a1a2e;
             line-height: 1.15;
         }
 
         .product-desc {
-            font-size: 8px;
+            font-size: 10px;
             color: #666;
             margin-bottom: 5px;
             font-weight: 400;
@@ -466,14 +501,14 @@
         }
 
         .price-old {
-            font-size: 9px;
+            font-size: 11px;
             color: #999;
             text-decoration: line-through;
             font-weight: 400;
         }
 
         .price-new {
-            font-size: 18px;
+            font-size: 21px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #1a1a2e;
@@ -481,9 +516,9 @@
 
         .price-off {
             background: rgba(52, 211, 153, 0.2);
-            padding: 2px 5px;
+            padding: 3px 6px;
             border-radius: 7px;
-            font-size: 8px;
+            font-size: 10px;
             font-weight: 600;
             color: #059669;
             border: 1px solid rgba(52, 211, 153, 0.3);
@@ -491,10 +526,10 @@
 
         .btn-shopee {
             width: 100%;
-            padding: 7px;
+            padding: 8px;
             border: none;
             border-radius: 9px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             letter-spacing: 0.2px;
@@ -651,7 +686,7 @@
         /* Navbar */
         .bottom-nav {
             position: fixed;
-            bottom: max(16px, calc(env(safe-area-inset-bottom) + 8px));
+            bottom: max(5px, calc(env(safe-area-inset-bottom) + 3px));
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -782,10 +817,11 @@
             .card-name { font-size: 12px; }
             .card-price-new { font-size: 17px; }
             .promo-timer { font-size: 10px; padding: 6px 10px; }
+            .top-frete-badge { font-size: 10px; padding: 6px 10px; }
             .top-bar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); gap: 8px; }
-            .product-info-box { bottom: calc(58px + env(safe-area-inset-bottom)); padding: 6px 9px; }
-            .product-name { font-size: 13px; }
-            .price-new { font-size: 17px; }
+            .product-info-box { bottom: calc(63px + env(safe-area-inset-bottom)); padding: 6px 9px; }
+            .product-name { font-size: 15px; }
+            .price-new { font-size: 20px; }
         }
 
         @media (max-width: 380px) {
@@ -797,14 +833,16 @@
             .card-name { font-size: 11px; }
             .card-price-new { font-size: 15px; }
             .promo-timer { font-size: 9px; padding: 5px 8px; }
+            .promo-timer .timer-text { display: none; }
+            .top-frete-badge { font-size: 9px; padding: 5px 9px; }
             .top-bar { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); gap: 6px; }
             .brand-logo { padding: 6px 12px; }
             .brand-logo span { font-size: 10px; }
             .share-btn { width: 32px; height: 32px; min-width: 32px; }
-            .product-info-box { bottom: calc(52px + env(safe-area-inset-bottom)); padding: 6px 8px; border-radius: 11px; }
-            .product-name { font-size: 12px; }
-            .price-new { font-size: 16px; }
-            .btn-shopee { padding: 7px; font-size: 9px; }
+            .product-info-box { bottom: calc(57px + env(safe-area-inset-bottom)); padding: 6px 8px; border-radius: 11px; }
+            .product-name { font-size: 14px; }
+            .price-new { font-size: 19px; }
+            .btn-shopee { padding: 8px; font-size: 11px; }
         }
 
         @media (max-width: 400px) {
@@ -813,7 +851,7 @@
         }
 
         @media (max-height: 600px) {
-            .product-info-box { bottom: calc(48px + env(safe-area-inset-bottom)); }
+            .product-info-box { bottom: calc(53px + env(safe-area-inset-bottom)); }
             .top-bar { gap: 6px; }
         }
     </style>
@@ -822,12 +860,21 @@
     <!-- Barra Superior -->
     <div class="top-bar" id="topBar">
         <div class="top-bar-row">
-            <div class="brand-logo">
-                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2" stroke="#f5f5f7" stroke-width="2" fill="none"/>
-                </svg>
-                <span>Achadinhos da Mary</span>
+            <div class="brand-group">
+                <div class="brand-logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2" stroke="#f5f5f7" stroke-width="2" fill="none"/>
+                    </svg>
+                    <span>Achadinhos da Mary</span>
+                </div>
+                <div class="promo-timer" id="promoTimer">
+                    <svg class="timer-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                    </svg>
+                    <span class="timer-text">Expira em</span>
+                    <span class="timer-numbers" id="timerDisplay">6d 23:59:59</span>
+                </div>
             </div>
             <button class="share-btn" id="shareButton" onclick="openShareModal()">
                 <svg viewBox="0 0 24 24">
@@ -835,14 +882,9 @@
                 </svg>
             </button>
         </div>
-        <div class="promo-timer" id="promoTimer">
-            <svg class="timer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-            </svg>
-            <span class="timer-text">Promoção expira em</span>
-            <span class="timer-numbers" id="timerDisplay">6d 23:59:59</span>
-        </div>
+        <div class="top-frete-badge">Frete Grátis</div>
     </div>
+
 
     <!-- Página de Vídeos -->
     <div class="page-videos" id="pageVideos">
@@ -990,8 +1032,10 @@
                     <svg width="60" height="60" viewBox="0 0 24 24" fill="rgba(255,107,53,0.25)"><path d="M8 5v14l11-7z"/></svg>
                 </div>
                 <div class="product-info-box">
-                    <div class="product-tag">Frete Grátis</div>
-                    <div class="product-name">${product.name}</div>
+                    <div class="product-name-row">
+                        <span class="product-tag">Frete Grátis</span>
+                        <div class="product-name">${product.name}</div>
+                    </div>
                     <div class="product-desc">${product.desc}</div>
                     <div class="price-row">
                         <span class="price-old">${product.priceOld}</span>
