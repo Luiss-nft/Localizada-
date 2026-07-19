@@ -273,7 +273,7 @@
             opacity: 0.9;
         }
 
-        /* ===== BARRA SUPERIOR - FIXA EM LINHA ===== */
+        /* ===== BARRA SUPERIOR - LOGO ESQUERDA | CRONÔMETRO CENTRO | COMPARTILHAR DIREITA ===== */
         .top-bar {
             position: fixed;
             top: 0;
@@ -282,77 +282,65 @@
             z-index: 10;
             padding: calc(12px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            justify-content: center;
         }
 
         .top-bar-row {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: nowrap; /* IMPEDE QUEBRAR PARA LINHA DE BAIXO */
-            min-width: 0;
+            justify-content: space-between;
+            gap: 8px;
             width: 100%;
+            max-width: 500px;
         }
 
-        /* LOGO - encolhe em telas pequenas */
+        /* ===== LOGO - LADO ESQUERDO ===== */
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
             background: rgba(245,245,247,0.85);
             backdrop-filter: blur(10px);
-            padding: 6px 12px;
-            border-radius: 18px;
+            border-radius: 50%;
             border: 1px solid rgba(0,0,0,0.06);
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            flex-shrink: 1;
-            min-width: 0;
             overflow: hidden;
         }
 
-        .brand-logo .logo-icon {
-            width: 16px;
-            height: 16px;
-            color: #FF6B35;
-            flex-shrink: 0;
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .brand-logo span {
-            color: #1a1a2e;
-            font-size: clamp(10px, 2.5vw, 13px);
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* CRONÔMETRO - encolhe em telas pequenas */
+        /* ===== CRONÔMETRO - CENTRO ===== */
         .promo-timer {
             background: rgba(255,107,53,0.1);
             backdrop-filter: blur(10px);
-            padding: 5px 10px;
-            border-radius: 18px;
+            padding: 6px 14px;
+            border-radius: 20px;
             color: #FF6B35;
-            font-size: clamp(9px, 2.2vw, 12px);
+            font-size: clamp(10px, 2.5vw, 13px);
             font-weight: 500;
             letter-spacing: 0.3px;
             border: 1px solid rgba(255,107,53,0.25);
             box-shadow: 0 2px 12px rgba(255,107,53,0.08);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             white-space: nowrap;
-            flex-shrink: 1;
+            flex: 1;
+            justify-content: center;
             min-width: 0;
-            overflow: hidden;
+            max-width: 220px;
         }
 
         .promo-timer .timer-icon {
-            width: 13px;
-            height: 13px;
+            width: 14px;
+            height: 14px;
             flex-shrink: 0;
         }
 
@@ -382,15 +370,15 @@
             50% { transform: scale(1.03); }
         }
 
-        /* BOTÃO COMPARTILHAR - tamanho fixo pequeno */
+        /* ===== BOTÃO COMPARTILHAR - LADO DIREITO ===== */
         .share-btn {
             background: rgba(245,245,247,0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(0,0,0,0.06);
             color: #1a1a2e;
-            width: 34px;
-            height: 34px;
-            min-width: 34px;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -413,8 +401,8 @@
         }
 
         .share-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             fill: #1a1a2e;
             flex-shrink: 0;
         }
@@ -793,6 +781,7 @@
             display: none !important;
         }
 
+        /* ===== RESPONSIVO ===== */
         @media (max-width: 500px) {
             .bottom-nav { border-radius: 22px; padding: 5px; gap: 2px; }
             .nav-item { padding: 10px 16px; gap: 6px; border-radius: 18px; }
@@ -805,17 +794,23 @@
             .product-info-box { bottom: calc(63px + env(safe-area-inset-bottom)); padding: 6px 9px; }
             .product-name { font-size: 15px; }
             .price-new { font-size: 20px; }
-            /* Ajuste extra para telas muito pequenas */
-            .top-bar { padding: calc(8px + env(safe-area-inset-top)) 8px 4px 8px; gap: 4px; }
+            
+            .brand-logo { width: 40px; height: 40px; }
+            .share-btn { width: 40px; height: 40px; min-width: 40px; }
+            .share-btn svg { width: 18px; height: 18px; }
+            .promo-timer { padding: 5px 10px; font-size: 10px; max-width: 180px; }
+        }
+
+        @media (max-width: 400px) {
+            .brand-logo { width: 36px; height: 36px; }
+            .share-btn { width: 36px; height: 36px; min-width: 36px; }
+            .share-btn svg { width: 16px; height: 16px; }
+            .promo-timer { padding: 4px 8px; font-size: 9px; max-width: 150px; }
+            .promo-timer .timer-text { display: none; }
+            .scroll-dot { height: 10px; }
+            .scroll-dot.active { height: 20px; }
+            .top-bar { padding: calc(8px + env(safe-area-inset-top)) 8px 4px 8px; }
             .top-bar-row { gap: 4px; }
-            .brand-logo { padding: 4px 8px; border-radius: 14px; }
-            .brand-logo .logo-icon { width: 14px; height: 14px; }
-            .brand-logo span { font-size: 9px; }
-            .promo-timer { padding: 4px 6px; border-radius: 14px; gap: 3px; }
-            .promo-timer .timer-icon { width: 11px; height: 11px; }
-            .promo-timer .timer-numbers { font-size: 8px; }
-            .share-btn { width: 30px; height: 30px; min-width: 30px; }
-            .share-btn svg { width: 14px; height: 14px; }
         }
 
         @media (max-width: 380px) {
@@ -830,42 +825,35 @@
             .product-name { font-size: 14px; }
             .price-new { font-size: 19px; }
             .btn-shopee { padding: 8px; font-size: 11px; }
-            /* Ajuste extra para telas muito pequenas */
-            .top-bar { padding: calc(6px + env(safe-area-inset-top)) 4px 2px 4px; gap: 2px; }
-            .top-bar-row { gap: 2px; }
-            .brand-logo { padding: 3px 6px; border-radius: 12px; }
-            .brand-logo .logo-icon { width: 12px; height: 12px; }
-            .brand-logo span { font-size: 7px; }
-            .promo-timer { padding: 3px 4px; border-radius: 12px; gap: 2px; }
-            .promo-timer .timer-icon { width: 9px; height: 9px; }
-            .promo-timer .timer-text { display: none; }
+            
+            .brand-logo { width: 32px; height: 32px; }
+            .share-btn { width: 32px; height: 32px; min-width: 32px; }
+            .share-btn svg { width: 14px; height: 14px; }
+            .promo-timer { padding: 3px 6px; font-size: 8px; max-width: 120px; }
+            .promo-timer .timer-icon { width: 10px; height: 10px; }
             .promo-timer .timer-numbers { font-size: 7px; }
-            .share-btn { width: 26px; height: 26px; min-width: 26px; }
-            .share-btn svg { width: 12px; height: 12px; }
-        }
-
-        @media (max-width: 400px) {
-            .scroll-dot { height: 10px; }
-            .scroll-dot.active { height: 20px; }
+            .top-bar { padding: calc(6px + env(safe-area-inset-top)) 4px 2px 4px; }
+            .top-bar-row { gap: 2px; }
         }
 
         @media (max-height: 600px) {
             .product-info-box { bottom: calc(53px + env(safe-area-inset-bottom)); }
-            .top-bar { gap: 4px; }
+            .top-bar { padding: calc(8px + env(safe-area-inset-top)) 12px 4px 12px; }
+            .brand-logo { width: 36px; height: 36px; }
+            .share-btn { width: 36px; height: 36px; min-width: 36px; }
         }
     </style>
 </head>
 <body>
-    <!-- Barra Superior -->
+    <!-- ===== BARRA SUPERIOR ===== -->
     <div class="top-bar" id="topBar">
         <div class="top-bar-row">
-            <div class="brand-logo">
-                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2" stroke="#f5f5f7" stroke-width="2" fill="none"/>
-                </svg>
-                <span>Achadinhos da Mary</span>
+            <!-- LOGO - LADO ESQUERDO -->
+            <div class="brand-logo" id="brandLogo">
+                <img src="imagen/LOGO PNG.png" alt="Logo Achadinhos da Mary">
             </div>
+
+            <!-- CRONÔMETRO - CENTRO -->
             <div class="promo-timer" id="promoTimer">
                 <svg class="timer-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
@@ -873,6 +861,8 @@
                 <span class="timer-text">Expira em</span>
                 <span class="timer-numbers" id="timerDisplay">6d 23:59:59</span>
             </div>
+
+            <!-- BOTÃO COMPARTILHAR - LADO DIREITO -->
             <button class="share-btn" id="shareButton" onclick="openShareModal()">
                 <svg viewBox="0 0 24 24">
                     <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
