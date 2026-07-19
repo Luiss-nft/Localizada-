@@ -289,15 +289,8 @@
         .top-bar-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 8px;
-        }
-
-        .brand-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 0;
             flex-wrap: wrap;
         }
 
@@ -411,23 +404,6 @@
             animation: pulse-expiring 1s ease-in-out infinite;
         }
 
-        .top-frete-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #059669;
-            color: #ffffff;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 12px rgba(5,150,105,0.25);
-            align-self: flex-start;
-            white-space: nowrap;
-        }
-
         @keyframes pulse-expiring {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.03); }
@@ -440,13 +416,11 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: #ffffff;
             border-radius: 12px;
             padding: 7px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             width: min(225px, calc(100vw - 32px));
         }
 
@@ -817,7 +791,6 @@
             .card-name { font-size: 12px; }
             .card-price-new { font-size: 17px; }
             .promo-timer { font-size: 10px; padding: 6px 10px; }
-            .top-frete-badge { font-size: 10px; padding: 6px 10px; }
             .top-bar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); gap: 8px; }
             .product-info-box { bottom: calc(63px + env(safe-area-inset-bottom)); padding: 6px 9px; }
             .product-name { font-size: 15px; }
@@ -834,7 +807,6 @@
             .card-price-new { font-size: 15px; }
             .promo-timer { font-size: 9px; padding: 5px 8px; }
             .promo-timer .timer-text { display: none; }
-            .top-frete-badge { font-size: 9px; padding: 5px 9px; }
             .top-bar { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); gap: 6px; }
             .brand-logo { padding: 6px 12px; }
             .brand-logo span { font-size: 10px; }
@@ -860,21 +832,19 @@
     <!-- Barra Superior -->
     <div class="top-bar" id="topBar">
         <div class="top-bar-row">
-            <div class="brand-group">
-                <div class="brand-logo">
-                    <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2" stroke="#f5f5f7" stroke-width="2" fill="none"/>
-                    </svg>
-                    <span>Achadinhos da Mary</span>
-                </div>
-                <div class="promo-timer" id="promoTimer">
-                    <svg class="timer-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
-                    </svg>
-                    <span class="timer-text">Expira em</span>
-                    <span class="timer-numbers" id="timerDisplay">6d 23:59:59</span>
-                </div>
+            <div class="brand-logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2" stroke="#f5f5f7" stroke-width="2" fill="none"/>
+                </svg>
+                <span>Achadinhos da Mary</span>
+            </div>
+            <div class="promo-timer" id="promoTimer">
+                <svg class="timer-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                </svg>
+                <span class="timer-text">Expira em</span>
+                <span class="timer-numbers" id="timerDisplay">6d 23:59:59</span>
             </div>
             <button class="share-btn" id="shareButton" onclick="openShareModal()">
                 <svg viewBox="0 0 24 24">
@@ -882,8 +852,8 @@
                 </svg>
             </button>
         </div>
-        <div class="top-frete-badge">Frete Grátis</div>
     </div>
+
 
 
     <!-- Página de Vídeos -->
